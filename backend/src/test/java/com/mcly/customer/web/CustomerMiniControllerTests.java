@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,17 +42,38 @@ class CustomerMiniControllerTests {
     void shouldFilterOrdersByCurrentCustomer() throws Exception {
         mockMvc.perform(get("/api/c-app/orders"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].orderNo").value("ORD202604050001"))
+                .andExpect(jsonPath("$.data[0].type").value("单次门票"))
+                .andExpect(jsonPath("$.data[0].status").value("PAID"))
+                .andExpect(jsonPath("$.data[0].amount").value("68.00"))
                 .andExpect(jsonPath("$.data[0].storeName").value("上海萌宠乐园旗舰店"))
-                .andExpect(jsonPath("$.data[0].reservationDate").exists());
+                .andExpect(jsonPath("$.data[0].reservationDate").exists())
+                .andExpect(jsonPath("$.data[0].timeSlot").value("09:00-12:00"));
+    }
+
+    @Test
+    void shouldReturnActivePasses() throws Exception {
+        mockMvc.perform(get("/api/c-app/passes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(1))
+          .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].name").value("单次门票入园资格"))
+          .andExpect(jsonPath("$.data[0].status").value("ACTIVE"))
+          .andExpect(jsonPath("$.data[0].storeName").value("上海萌宠乐园旗舰店"))
+          .andExpect(jsonPath("$.data[0].validFrom").exists())
+          .andExpect(jsonPath("$.data[0].validTo").exists())
+                .andExpect(jsonPath("$.data[0].reentryPolicy").value("SAME_DAY_UNLIMITED"));
     }
 
     @Test
     @Transactional
-    void shouldCreateReservationAndOrder() throws Exception {
+    void shouldCreateReservationOrderAndPassEntitlement() throws Exception {
         Integer reservationCountBefore = jdbcTemplate.queryForObject("select count(*) from reservation", Integer.class);
         Integer orderCountBefore = jdbcTemplate.queryForObject("select count(*) from customer_order", Integer.class);
+        Integer entitlementCountBefore = jdbcTemplate.queryForObject("select count(*) from pass_entitlement", Integer.class);
 
         mockMvc.perform(post("/api/c-app/reservations")
                         .contentType("application/json")
@@ -70,9 +92,11 @@ class CustomerMiniControllerTests {
 
         Integer reservationCountAfter = jdbcTemplate.queryForObject("select count(*) from reservation", Integer.class);
         Integer orderCountAfter = jdbcTemplate.queryForObject("select count(*) from customer_order", Integer.class);
+        Integer entitlementCountAfter = jdbcTemplate.queryForObject("select count(*) from pass_entitlement", Integer.class);
 
-        org.assertj.core.api.Assertions.assertThat(reservationCountAfter).isEqualTo((reservationCountBefore == null ? 0 : reservationCountBefore) + 1);
-        org.assertj.core.api.Assertions.assertThat(orderCountAfter).isEqualTo((orderCountBefore == null ? 0 : orderCountBefore) + 1);
+        assertThat(reservationCountAfter).isEqualTo((reservationCountBefore == null ? 0 : reservationCountBefore) + 1);
+        assertThat(orderCountAfter).isEqualTo((orderCountBefore == null ? 0 : orderCountBefore) + 1);
+        assertThat(entitlementCountAfter).isEqualTo((entitlementCountBefore == null ? 0 : entitlementCountBefore) + 1);
     }
 
     @Test

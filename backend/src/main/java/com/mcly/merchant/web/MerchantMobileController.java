@@ -13,6 +13,9 @@ import com.mcly.grooming.service.GroomingService;
 import com.mcly.material.api.MaterialStockResponse;
 import com.mcly.material.api.ReportMaterialLossRequest;
 import com.mcly.material.service.MaterialService;
+import com.mcly.merchant.api.MerchantCheckinOrderResponse;
+import com.mcly.merchant.api.MerchantCheckinVerifyRequest;
+import com.mcly.merchant.api.MerchantCheckinVerifyResponse;
 import com.mcly.merchant.api.CreateManualReleaseRequest;
 import com.mcly.merchant.api.MerchantTaskResponse;
 import com.mcly.merchant.service.MerchantMobileService;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/m-app")
@@ -48,6 +52,20 @@ public class MerchantMobileController {
     @GetMapping("/task-board")
     public ApiResponse<List<MerchantTaskResponse>> taskBoard() {
         return ApiResponse.ok(merchantMobileService.taskBoard());
+    }
+
+    @GetMapping("/checkin/orders")
+    public ApiResponse<List<MerchantCheckinOrderResponse>> listCheckinOrders(
+            @RequestParam(required = false) Long storeId
+    ) {
+        return ApiResponse.ok(merchantMobileService.listCheckinOrders(storeId));
+    }
+
+    @PostMapping("/checkin/verify")
+    public ApiResponse<MerchantCheckinVerifyResponse> verifyCheckin(
+            @Valid @RequestBody MerchantCheckinVerifyRequest request
+    ) {
+        return ApiResponse.ok(merchantMobileService.verifyCheckin(request));
     }
 
     @PostMapping("/manual-releases")

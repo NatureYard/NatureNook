@@ -7,6 +7,7 @@ import com.mcly.customer.api.CreateCustomerReservationRequest;
 import com.mcly.customer.api.CreateCustomerReservationResponse;
 import com.mcly.customer.api.CustomerHomeResponse;
 import com.mcly.customer.api.CustomerOrderResponse;
+import com.mcly.customer.api.CustomerPassResponse;
 import com.mcly.customer.api.CustomerPetResponse;
 import com.mcly.customer.api.CustomerProfileResponse;
 import com.mcly.customer.api.CustomerTicketResponse;
@@ -47,6 +48,11 @@ public class CustomerMiniController {
     @GetMapping("/pets")
     public ApiResponse<List<CustomerPetResponse>> pets() {
         return ApiResponse.ok(customerMiniService.pets());
+    }
+
+    @GetMapping("/passes")
+    public ApiResponse<List<CustomerPassResponse>> passes() {
+        return ApiResponse.ok(customerMiniService.passes());
     }
 
     @GetMapping("/cards")

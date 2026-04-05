@@ -4,6 +4,7 @@ import com.mcly.common.repository.QuerySupport;
 import com.mcly.customer.api.CustomerCardResponse;
 import com.mcly.customer.api.CustomerContextResponse;
 import com.mcly.customer.api.CustomerOrderResponse;
+import com.mcly.customer.api.CustomerPassResponse;
 import com.mcly.customer.api.CustomerPetResponse;
 import com.mcly.customer.api.CustomerProfileResponse;
 import java.util.List;
@@ -41,6 +42,11 @@ public class CustomerMiniQueryRepository extends QuerySupport {
     public List<CustomerPetResponse> pets() {
         CurrentCustomer currentCustomer = currentCustomer();
         return currentCustomer == null ? List.of() : pets(currentCustomer.memberId());
+    }
+
+    public List<CustomerPassResponse> passes() {
+        CurrentCustomer currentCustomer = currentCustomer();
+        return currentCustomer == null ? List.of() : passes(currentCustomer.memberId());
     }
 
     public List<CustomerCardResponse> cards() {
@@ -105,6 +111,32 @@ public class CustomerMiniQueryRepository extends QuerySupport {
                 rs.getString("store_name"),
                 rs.getString("reservation_date"),
                 rs.getString("time_slot")
+        ), memberId);
+    }
+
+    private List<CustomerPassResponse> passes(Long memberId) {
+        return query("""
+                select pe.id,
+                       pe.source_type,
+                       pe.status,
+                       s.name as store_name,
+                       to_char(pe.valid_from, 'YYYY-MM-DD"T"HH24:MI:SS') as valid_from,
+                       to_char(pe.valid_to, 'YYYY-MM-DD"T"HH24:MI:SS') as valid_to,
+                       pe.reentry_policy
+                from pass_entitlement pe
+                join store s on s.id = pe.store_id
+                where pe.member_id = ?
+                  and pe.status = 'ACTIVE'
+                  and pe.valid_to >= current_timestamp
+                order by pe.valid_to desc
+                """, (rs, rowNum) -> new CustomerPassResponse(
+                rs.getLong("id"),
+                toEntitlementName(rs.getString("source_type")),
+                rs.getString("status"),
+                rs.getString("store_name"),
+                rs.getString("valid_from"),
+                rs.getString("valid_to"),
+                rs.getString("reentry_policy")
         ), memberId);
     }
 
@@ -214,6 +246,18 @@ public class CustomerMiniQueryRepository extends QuerySupport {
             case "MONTH_CARD" -> "月卡";
             case "SEASON_CARD" -> "季卡";
             default -> orderType;
+        };
+    }
+
+    private String toEntitlementName(String sourceType) {
+        return switch (sourceType) {
+            case "DAY_TICKET" -> "单次门票入园资格";
+            case "GROOMING_PACKAGE" -> "洗护到店资格";
+            case "BOARDING_DAY" -> "寄养到店资格";
+            case "YEAR_CARD" -> "年卡入园资格";
+            case "MONTH_CARD" -> "月卡入园资格";
+            case "SEASON_CARD" -> "季卡入园资格";
+            default -> sourceType;
         };
     }
 

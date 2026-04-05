@@ -4,6 +4,7 @@ import com.mcly.customer.api.CreateCustomerReservationRequest;
 import com.mcly.customer.api.CustomerCardResponse;
 import com.mcly.customer.api.CustomerHomeResponse;
 import com.mcly.customer.api.CustomerOrderResponse;
+import com.mcly.customer.api.CustomerPassResponse;
 import com.mcly.customer.api.CustomerPetResponse;
 import com.mcly.customer.api.CustomerContextResponse;
 import com.mcly.customer.api.CreateCustomerReservationResponse;
@@ -12,12 +13,13 @@ import com.mcly.customer.api.CustomerTicketResponse;
 import com.mcly.customer.repository.CustomerMiniQueryRepository;
 import com.mcly.order.repository.CustomerOrderCommandRepository;
 import com.mcly.order.repository.ReservationCommandRepository;
+import com.mcly.pass.repository.PassEntitlementCommandRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CustomerMiniService {
@@ -25,15 +27,18 @@ public class CustomerMiniService {
     private final CustomerMiniQueryRepository customerMiniQueryRepository;
     private final ReservationCommandRepository reservationCommandRepository;
     private final CustomerOrderCommandRepository customerOrderCommandRepository;
+    private final PassEntitlementCommandRepository passEntitlementCommandRepository;
 
     public CustomerMiniService(
             CustomerMiniQueryRepository customerMiniQueryRepository,
             ReservationCommandRepository reservationCommandRepository,
-            CustomerOrderCommandRepository customerOrderCommandRepository
+            CustomerOrderCommandRepository customerOrderCommandRepository,
+            PassEntitlementCommandRepository passEntitlementCommandRepository
     ) {
         this.customerMiniQueryRepository = customerMiniQueryRepository;
         this.reservationCommandRepository = reservationCommandRepository;
         this.customerOrderCommandRepository = customerOrderCommandRepository;
+        this.passEntitlementCommandRepository = passEntitlementCommandRepository;
     }
 
     public CustomerHomeResponse home() {
@@ -54,6 +59,10 @@ public class CustomerMiniService {
 
     public List<CustomerPetResponse> pets() {
         return customerMiniQueryRepository.pets();
+    }
+
+    public List<CustomerPassResponse> passes() {
+        return customerMiniQueryRepository.passes();
     }
 
     public List<CustomerCardResponse> cards() {
@@ -103,6 +112,7 @@ public class CustomerMiniService {
         Long reservationId = reservationCommandRepository.create(
                 context.memberId(),
                 context.storeId(),
+                request.petId(),
                 ticket.type(),
                 reservationDate,
                 request.timeSlot(),
@@ -120,6 +130,15 @@ public class CustomerMiniService {
                 ticket.type(),
                 "PAID",
                 ticket.price()
+        );
+
+        passEntitlementCommandRepository.createDayAccessEntitlement(
+                context.memberId(),
+                context.storeId(),
+                ticket.code(),
+                reservationId,
+                reservationDate,
+                "SAME_DAY_UNLIMITED"
         );
 
         return new CreateCustomerReservationResponse(reservationId, orderId, orderNo, "PAID");

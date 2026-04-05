@@ -14,6 +14,13 @@
   color: #64748b;
 }
 
+.section-title {
+  margin: 32rpx 0 16rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #0f172a;
+}
+
 .card {
   margin-bottom: 16rpx;
   padding: 28rpx;
@@ -38,6 +45,11 @@
 .amount {
   margin-top: 10rpx;
   color: #6b7280;
+}
+
+.pass-card {
+  background: linear-gradient(135deg, #ecfeff 0%, #ffffff 100%);
+  border: 2rpx solid #bae6fd;
 }
 
 .badge {
