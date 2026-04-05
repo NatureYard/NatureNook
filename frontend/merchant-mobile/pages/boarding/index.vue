@@ -155,7 +155,7 @@ function submitDailyRecord() {
 
 .desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
   font-size: 26rpx;
 }
 
@@ -166,27 +166,27 @@ function submitDailyRecord() {
 }
 
 .tag-active {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--state-success-bg);
+  color: var(--state-success-fg);
 }
 
 .tag-done {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: var(--surface-soft);
+  color: var(--text-tertiary);
 }
 
 .input {
   margin-top: 16rpx;
   padding: 20rpx;
   border-radius: 16rpx;
-  background: #f5f7f8;
+  background: var(--surface-muted);
   display: block;
   width: 100%;
 }
 
 .btn {
   margin-top: 16rpx;
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
   border-radius: 16rpx;
 }

@@ -4,14 +4,6 @@
   padding-right: 24rpx;
 }
 
-.card-shell {
-  position: relative;
-  overflow: hidden;
-  border-radius: 32rpx;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 28rpx 70rpx rgba(214, 115, 85, 0.12);
-}
-
 .orders-hero {
   padding: 0;
 }
@@ -178,13 +170,11 @@
 .order-type {
   font-size: 34rpx;
   font-weight: 700;
-  color: #2f2a24;
 }
 
 .order-no {
   margin-top: 8rpx;
   font-size: 24rpx;
-  color: #a28f80;
 }
 
 .order-side {
@@ -196,7 +186,6 @@
 
 .order-tone {
   font-size: 24rpx;
-  color: #8a7767;
 }
 
 .order-meta-row {

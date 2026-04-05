@@ -18,7 +18,6 @@
 
 .progress-caption {
   font-size: 24rpx;
-  color: #8d7b6d;
 }
 
 .hero-shell {
@@ -127,28 +126,16 @@
   color: #7f7467;
 }
 
-.tone-sun {
-  background: linear-gradient(180deg, #fff8df 0%, #ffffff 100%);
-}
-
 .tone-sun .service-badge,
 .tone-sun .selection-badge {
   background: rgba(217, 119, 6, 0.12);
   color: #d97706;
 }
 
-.tone-rose {
-  background: linear-gradient(180deg, #fff0ea 0%, #ffffff 100%);
-}
-
 .tone-rose .service-badge,
 .tone-rose .selection-badge {
   background: rgba(239, 91, 115, 0.12);
   color: #ef5b73;
-}
-
-.tone-mint {
-  background: linear-gradient(180deg, #eafff2 0%, #ffffff 100%);
 }
 
 .tone-mint .service-badge,
@@ -227,7 +214,6 @@
   margin-top: 10rpx;
   font-size: 36rpx;
   font-weight: 700;
-  color: #2e2a26;
 }
 
 .selection-name {
@@ -248,7 +234,6 @@
 .form-title {
   font-size: 36rpx;
   font-weight: 700;
-  color: #0f172a;
 }
 
 .inline-alert {
@@ -271,7 +256,6 @@
 
 .form-label {
   font-size: 26rpx;
-  color: #8b7d6b;
 }
 
 .form-value,
@@ -305,12 +289,10 @@
 }
 
 .summary-label {
-  color: #8b7d6b;
 }
 
 .summary-caption {
   margin-top: 8rpx;
-  color: #8b7d6b;
   font-size: 26rpx;
 }
 

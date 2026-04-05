@@ -54,7 +54,7 @@ function navigate(path) {
 
 .panel,
 .item {
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 20rpx;
   padding: 24rpx;
 }
@@ -66,7 +66,7 @@ function navigate(path) {
 
 .desc {
   margin-top: 12rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 
 .grid {
@@ -83,13 +83,13 @@ function navigate(path) {
 
 .item-desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .item-count {
   margin-top: 12rpx;
-  color: #0f766e;
+  color: var(--brand-secondary);
   font-size: 34rpx;
   font-weight: 700;
 }

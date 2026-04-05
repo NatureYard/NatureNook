@@ -8,6 +8,32 @@ page {
   font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
+/*
+Customer Mini Color Roles
+- brand-primary: #ff6b4a
+- brand-primary-strong: #ff8a5c
+- brand-secondary: #2f8f7d
+- brand-secondary-soft: #61c5a4
+- text-primary: #2f2a24
+- text-secondary: #7d6d60
+- text-tertiary: #8c796b
+- surface-base: #fff9f2
+- surface-card: rgba(255, 255, 255, 0.94)
+- surface-overlay: rgba(255, 255, 255, 0.72)
+- border-subtle: rgba(46, 42, 38, 0.06)
+- state-success-fg: #2c8776
+- state-success-bg: rgba(74, 183, 157, 0.12)
+- state-warning-fg: #d97706
+- state-warning-bg: rgba(217, 119, 6, 0.12)
+- state-error-fg: #ef5b73
+- state-error-bg: rgba(239, 91, 115, 0.12)
+- state-info-fg: #b0613f
+- state-info-bg: rgba(255, 139, 93, 0.14)
+
+Detailed token specification:
+- docs/frontend-design-tokens.md
+*/
+
 .page {
   min-height: 100vh;
   padding-bottom: calc(env(safe-area-inset-bottom) + 228rpx);
@@ -179,10 +205,44 @@ page {
   border: 0;
 }
 
+.card-shell,
 .surface-card {
+  position: relative;
+  overflow: hidden;
   border-radius: 32rpx;
   background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 24rpx 60rpx rgba(95, 63, 38, 0.1);
+}
+
+.tone-sun {
+  background: linear-gradient(180deg, #fff6d9 0%, #ffffff 100%);
+}
+
+.tone-rose {
+  background: linear-gradient(180deg, #ffe9e4 0%, #ffffff 100%);
+}
+
+.tone-mint {
+  background: linear-gradient(180deg, #e7fff4 0%, #ffffff 100%);
+}
+
+.tone-sky {
+  background: linear-gradient(180deg, #ebf7ff 0%, #ffffff 100%);
+}
+
+.membership-card.peach,
+.pet-card.peach {
+  background: linear-gradient(145deg, #fff7f0 0%, #ffffff 100%);
+}
+
+.membership-card.mint,
+.pet-card.mint {
+  background: linear-gradient(145deg, #f0fffb 0%, #ffffff 100%);
+}
+
+.membership-card.sunset,
+.pet-card.cream {
+  background: linear-gradient(145deg, #fff1ec 0%, #ffffff 100%);
 }
 
 .status-pill {
@@ -202,6 +262,36 @@ page {
 .status-pill.mint {
   background: rgba(74, 183, 157, 0.12);
   color: #2c8776;
+}
+
+.meta-pill,
+.pet-badge {
+  background: rgba(74, 183, 157, 0.12);
+  color: #2c8776;
+}
+
+.price-label,
+.item-title,
+.footnote,
+.pet-note,
+.order-no,
+.order-tone,
+.progress-caption,
+.form-label,
+.summary-caption,
+.summary-label {
+  color: #8c796b;
+}
+
+.selection-title,
+.form-title,
+.item-value,
+.order-type {
+  color: #2f2a24;
+}
+
+.empty-state {
+  color: #7d6d61;
 }
 
 .helper-copy {

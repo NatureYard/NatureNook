@@ -4,12 +4,6 @@
   padding-right: 24rpx;
 }
 
-.card-shell {
-  border-radius: 32rpx;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 28rpx 70rpx rgba(214, 115, 85, 0.12);
-}
-
 .pets-hero {
   padding: 0;
 }
@@ -22,18 +16,6 @@
 
 .pet-card {
   padding: 28rpx;
-}
-
-.pet-card.peach {
-  background: linear-gradient(145deg, #fff8f1 0%, #ffffff 100%);
-}
-
-.pet-card.mint {
-  background: linear-gradient(145deg, #f1fffb 0%, #ffffff 100%);
-}
-
-.pet-card.cream {
-  background: linear-gradient(145deg, #fffdf6 0%, #ffffff 100%);
 }
 
 .pet-avatar {
@@ -54,8 +36,6 @@
   margin-top: 18rpx;
   padding: 10rpx 18rpx;
   border-radius: 999rpx;
-  background: rgba(74, 183, 157, 0.12);
-  color: #2f8374;
   font-size: 24rpx;
   font-weight: 600;
 }
@@ -78,13 +58,11 @@
   margin-top: 16rpx;
   font-size: 24rpx;
   line-height: 1.7;
-  color: #978375;
 }
 
 .empty-state {
   margin-top: 20rpx;
   padding: 56rpx 32rpx;
   text-align: center;
-  color: #7d6d61;
 }
 

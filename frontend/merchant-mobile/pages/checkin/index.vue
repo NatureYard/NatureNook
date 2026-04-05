@@ -269,14 +269,14 @@ function submit() {
 }
 
 .card {
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 20rpx;
   padding: 24rpx;
   margin-bottom: 16rpx;
 }
 
 .summary-card {
-  background: linear-gradient(135deg, #ecfeff 0%, #ffffff 100%);
+  background: linear-gradient(135deg, var(--surface-highlight-start) 0%, var(--surface-card) 100%);
 }
 
 .summary-row {
@@ -289,11 +289,11 @@ function submit() {
   flex: 1;
   padding: 20rpx;
   border-radius: 16rpx;
-  background: rgba(15, 118, 110, 0.08);
+  background: var(--surface-highlight-success);
 }
 
 .summary-label {
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 24rpx;
 }
 
@@ -301,7 +301,7 @@ function submit() {
   margin-top: 8rpx;
   font-size: 34rpx;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .summary-text {
@@ -312,19 +312,19 @@ function submit() {
   margin-top: 16rpx;
   padding: 20rpx;
   border-radius: 16rpx;
-  background: #f5f7f8;
+  background: var(--surface-muted);
 }
 
 .btn {
   margin-top: 16rpx;
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
   border-radius: 16rpx;
 }
 
 .secondary-btn {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--surface-soft);
+  color: var(--text-primary);
 }
 
 .title {
@@ -334,13 +334,13 @@ function submit() {
 
 .desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 
 .queue-item {
   margin-top: 20rpx;
   padding-top: 20rpx;
-  border-top: 1rpx solid #e5e7eb;
+  border-top: 1rpx solid var(--border-subtle);
 }
 
 .queue-title {
@@ -361,13 +361,13 @@ function submit() {
 }
 
 .tag-ready {
-  background: #ccfbf1;
-  color: #0f766e;
+  background: var(--state-success-bg);
+  color: var(--brand-secondary);
 }
 
 .tag-risk {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--state-risk-bg);
+  color: var(--state-risk-fg);
 }
 
 .action-row {
@@ -379,13 +379,13 @@ function submit() {
 .mini-btn {
   flex: 1;
   border-radius: 16rpx;
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--surface-soft);
+  color: var(--text-primary);
   font-size: 26rpx;
 }
 
 .primary-mini-btn {
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
 }
 
@@ -397,12 +397,12 @@ function submit() {
 }
 
 .verify-pass {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--state-success-bg);
+  color: var(--state-success-fg);
 }
 
 .verify-block {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--state-risk-bg);
+  color: var(--state-risk-fg);
 }
 </style>

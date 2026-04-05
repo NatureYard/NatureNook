@@ -71,13 +71,13 @@ onMounted(fetchTasks)
 .btn-refresh {
   font-size: 24rpx;
   padding: 8rpx 24rpx;
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
   border-radius: 12rpx;
 }
 
 .card {
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 20rpx;
   padding: 24rpx;
   margin-bottom: 16rpx;
@@ -95,13 +95,13 @@ onMounted(fetchTasks)
 }
 
 .count {
-  color: #0f766e;
+  color: var(--brand-secondary);
   font-size: 34rpx;
   font-weight: 700;
 }
 
 .desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 </style>

@@ -4,12 +4,6 @@
   padding-right: 24rpx;
 }
 
-.card-shell {
-  border-radius: 32rpx;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 28rpx 70rpx rgba(214, 115, 85, 0.12);
-}
-
 .cards-hero {
   padding: 0;
 }
@@ -17,18 +11,6 @@
 .membership-card {
   margin-top: 20rpx;
   padding: 30rpx;
-}
-
-.membership-card.peach {
-  background: linear-gradient(145deg, #fff7f0 0%, #fffdfb 100%);
-}
-
-.membership-card.mint {
-  background: linear-gradient(145deg, #f0fffb 0%, #ffffff 100%);
-}
-
-.membership-card.sunset {
-  background: linear-gradient(145deg, #fff0eb 0%, #fff8ed 100%);
 }
 
 .card-top {
@@ -66,7 +48,6 @@
 
 .price-label {
   font-size: 24rpx;
-  color: #9a8777;
 }
 
 .price {
@@ -85,21 +66,17 @@
 
 .meta-pill {
   margin-top: 18rpx;
-  background: rgba(71, 182, 156, 0.12);
-  color: #2e7f71;
 }
 
 .footnote {
   margin-top: 20rpx;
   font-size: 24rpx;
   line-height: 1.8;
-  color: #998677;
 }
 
 .empty-state {
   margin-top: 20rpx;
   padding: 56rpx 32rpx;
   text-align: center;
-  color: #7d6d61;
 }
 

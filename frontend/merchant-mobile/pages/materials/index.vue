@@ -147,7 +147,7 @@ function submitLoss() {
 }
 
 .card {
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 20rpx;
   padding: 24rpx;
   margin-bottom: 16rpx;
@@ -157,12 +157,12 @@ function submitLoss() {
   margin-top: 16rpx;
   padding: 20rpx;
   border-radius: 16rpx;
-  background: #f5f7f8;
+  background: var(--surface-muted);
 }
 
 .btn {
   margin-top: 16rpx;
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
   border-radius: 16rpx;
 }
@@ -174,6 +174,6 @@ function submitLoss() {
 
 .desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 </style>

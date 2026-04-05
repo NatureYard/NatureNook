@@ -144,7 +144,7 @@ function submitComplete() {
 
 .desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
   font-size: 26rpx;
 }
 
@@ -155,27 +155,27 @@ function submitComplete() {
 }
 
 .tag-active {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--state-warning-bg);
+  color: var(--state-warning-fg);
 }
 
 .tag-done {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--state-success-bg);
+  color: var(--state-success-fg);
 }
 
 .input {
   margin-top: 16rpx;
   padding: 20rpx;
   border-radius: 16rpx;
-  background: #f5f7f8;
+  background: var(--surface-muted);
   display: block;
   width: 100%;
 }
 
 .btn {
   margin-top: 16rpx;
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
   border-radius: 16rpx;
 }

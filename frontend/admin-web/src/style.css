@@ -1,7 +1,22 @@
 :root {
   font-family: "Noto Sans SC", "PingFang SC", sans-serif;
-  color: #1f2937;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef6f3 100%);
+  --brand-primary: #ff6b4a;
+  --brand-primary-strong: #ff8a5c;
+  --brand-secondary: #2f8f7d;
+  --text-primary: #2f2a24;
+  --text-secondary: #7d6d60;
+  --surface-base-start: #fff9f2;
+  --surface-base-end: #eef6f3;
+  --surface-card: rgba(255, 255, 255, 0.92);
+  --surface-sidebar: rgba(255, 255, 255, 0.85);
+  --border-subtle: #d7e6df;
+  --border-input: #cbd5e1;
+  --shadow-soft: 0 10px 30px rgba(47, 143, 125, 0.08);
+  --state-success-bg: rgba(74, 183, 157, 0.12);
+  --state-success-fg: #2c8776;
+  --state-error-fg: #b91c1c;
+  color: var(--text-primary);
+  background: linear-gradient(180deg, var(--surface-base-start) 0%, var(--surface-base-end) 100%);
 }
 
 * {
@@ -19,7 +34,7 @@ body {
 }
 
 .eyebrow {
-  color: #0f766e;
+  color: var(--brand-secondary);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -38,8 +53,8 @@ h1 {
 
 .sidebar {
   padding: 32px 24px;
-  border-right: 1px solid #d7e6df;
-  background: rgba(255, 255, 255, 0.85);
+  border-right: 1px solid var(--border-subtle);
+  background: var(--surface-sidebar);
   backdrop-filter: blur(16px);
 }
 
@@ -61,14 +76,14 @@ h1 {
   width: 100%;
   padding: 14px 16px;
   border-radius: 16px;
-  border: 1px solid #d7e6df;
+  border: 1px solid var(--border-subtle);
   background: #fff;
   cursor: pointer;
 }
 
 .nav-item.active {
-  border-color: #0f766e;
-  background: #e7f7f2;
+  border-color: var(--brand-secondary);
+  background: var(--state-success-bg);
 }
 
 .nav-item span {
@@ -76,7 +91,7 @@ h1 {
 }
 
 .nav-item small {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .content {
@@ -93,9 +108,9 @@ h1 {
 .metric-card,
 .panel,
 .card {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #d7e6df;
-  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.08);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
 }
 
 .metric-card {
@@ -105,7 +120,7 @@ h1 {
 
 .metric-card p {
   margin: 0 0 8px;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .metric-card strong {
@@ -133,7 +148,7 @@ h1 {
   padding: 10px 14px;
   border: none;
   border-radius: 12px;
-  background: #0f766e;
+  background: var(--brand-secondary);
   color: #fff;
   cursor: pointer;
 }
@@ -147,7 +162,7 @@ h1 {
 .input {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-input);
   border-radius: 12px;
   background: #fff;
 }
@@ -186,7 +201,7 @@ h1 {
 }
 
 .error {
-  color: #b91c1c;
+  color: var(--state-error-fg);
 }
 
 @media (max-width: 900px) {
@@ -196,7 +211,7 @@ h1 {
 
   .sidebar {
     border-right: none;
-    border-bottom: 1px solid #d7e6df;
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   .two-col {
