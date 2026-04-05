@@ -48,6 +48,7 @@
       <view class="card-foot">
         <view class="price">¥{{item.price}}</view>
         <view
+          id="select-product-{{item.code}}"
           class="action {{selectedProductCode === item.code ? 'active' : ''}}"
           data-index="{{index}}"
           bindtap="selectProduct"
@@ -65,7 +66,7 @@
         </view>
         <view class="selection-badge">{{selectedProductBadge}}</view>
       </view>
-      <view class="selection-name">{{selectedProductName}}</view>
+      <view id="selected-product-name" class="selection-name">{{selectedProductName}}</view>
       <view class="selection-desc">{{selectedProductDesc}}</view>
       <view class="selection-accent">{{selectedProductAccent}}</view>
     </view>
@@ -120,10 +121,10 @@
           <view class="summary-label">应付金额</view>
           <view class="summary-caption">提交后可在订单页查看凭证</view>
         </view>
-        <view class="summary-price">¥{{selectedProductPrice}}</view>
+        <view id="selected-product-price" class="summary-price">¥{{selectedProductPrice}}</view>
       </view>
 
-      <button class="submit-btn" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting || !pets.length}}">
+      <button id="tickets-submit" class="submit-btn" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting || !pets.length}}">
         确认并预约
       </button>
     </view>

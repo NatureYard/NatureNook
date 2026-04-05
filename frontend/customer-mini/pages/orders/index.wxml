@@ -5,7 +5,7 @@
       <view class="section-pill">订单履约</view>
     </view>
     <view class="page-hero-copy">
-      <view class="page-hero-title">订单与入园凭证</view>
+      <view id="orders-page-title" class="page-hero-title">订单与入园凭证</view>
       <view class="page-hero-text">把有效凭证、预约状态和支付记录放在同一张旅程面板里。</view>
     </view>
     <view class="page-status-panel">
@@ -18,7 +18,7 @@
         <view class="page-metric-label">当前凭证</view>
       </view>
       <view class="page-metric accent">
-        <view class="page-metric-value">{{orders.length}}</view>
+        <view id="orders-count-value" class="page-metric-value">{{orders.length}}</view>
         <view class="page-metric-label">历史订单</view>
       </view>
     </view>

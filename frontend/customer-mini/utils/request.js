@@ -1,6 +1,11 @@
 const BASE_URL = 'http://localhost:8080'
+const { isE2EMockEnabled, resolveE2EMockRequest } = require('./e2e-mock')
 
 function request(path, options = {}) {
+  if (isE2EMockEnabled()) {
+    return Promise.resolve(resolveE2EMockRequest(path, options))
+  }
+
   const { method = 'GET', data, headers = {} } = options
   return new Promise((resolve, reject) => {
     wx.request({
