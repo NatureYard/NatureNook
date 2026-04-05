@@ -5,9 +5,7 @@ import com.mcly.customer.api.CustomerCardResponse;
 import com.mcly.customer.api.CustomerHomeResponse;
 import com.mcly.customer.api.CustomerOrderResponse;
 import com.mcly.customer.api.CustomerPetResponse;
-import com.mcly.customer.api.CustomerCardResponse;
 import com.mcly.customer.api.CustomerContextResponse;
-import com.mcly.customer.api.CreateCustomerReservationRequest;
 import com.mcly.customer.api.CreateCustomerReservationResponse;
 import com.mcly.customer.api.CustomerProfileResponse;
 import com.mcly.customer.api.CustomerTicketResponse;
@@ -142,4 +140,3 @@ public class CustomerMiniService {
     ) {
     }
 }
-
