@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="hero">
+    <view class="title">萌宠乐园消费者小程序</view>
+    <view class="subtitle">购票、预约、卡种、宠物档案和入园凭证统一入口</view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">活动横幅</view>
+    <view wx:for="{{banners}}" wx:key="*this" class="banner-item">{{item}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">快捷入口</view>
+    <view class="quick-grid">
+      <view wx:for="{{quickEntries}}" wx:key="*this" class="module-item">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="tip-card">{{activeCardTip}}</view>
+</view>

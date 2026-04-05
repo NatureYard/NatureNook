@@ -1,0 +1,8 @@
+<view class="page">
+  <view wx:for="{{cards}}" wx:key="name" class="card">
+    <view class="name">{{item.name}}</view>
+    <view class="desc">{{item.desc}}</view>
+    <view class="price">¥{{item.price}}</view>
+  </view>
+</view>
+

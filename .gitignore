@@ -1,0 +1,22 @@
+# IntelliJ / VS Code
+.idea/
+.vscode/
+*.iml
+.codex
+
+# Java / Gradle
+backend/.gradle/
+backend/build/
+out/
+
+# Node
+node_modules/
+dist/
+.npm/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+

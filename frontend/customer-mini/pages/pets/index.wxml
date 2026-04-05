@@ -1,0 +1,7 @@
+<view class="page">
+  <view wx:for="{{pets}}" wx:key="name" class="card">
+    <view class="name">{{item.name}}</view>
+    <view class="desc">{{item.meta}}</view>
+  </view>
+</view>
+

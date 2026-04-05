@@ -1,0 +1,38 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/tickets/index",
+    "pages/cards/index",
+    "pages/pets/index",
+    "pages/orders/index",
+    "pages/profile/index"
+  ],
+  "tabBar": {
+    "color": "#5b6470",
+    "selectedColor": "#0f766e",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/tickets/index",
+        "text": "预约"
+      },
+      {
+        "pagePath": "pages/orders/index",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "window": {
+    "navigationBarTitleText": "萌宠乐园",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f6fbfa"
+  }
+}

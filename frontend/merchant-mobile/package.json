@@ -1,0 +1,9 @@
+{
+  "name": "mcly-merchant-mobile",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "echo \"merchant mobile scaffold\""
+  }
+}
+

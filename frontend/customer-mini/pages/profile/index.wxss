@@ -1,0 +1,21 @@
+.page {
+  padding: 24rpx;
+}
+
+.hero,
+.card {
+  padding: 28rpx;
+  border-radius: 20rpx;
+  background: #ffffff;
+  margin-bottom: 16rpx;
+}
+
+.name {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.desc {
+  margin-top: 10rpx;
+  color: #6b7280;
+}

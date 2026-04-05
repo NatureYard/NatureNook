@@ -1,0 +1,28 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "商户工作台"
+      }
+    },
+    {
+      "path": "pages/checkin/index",
+      "style": {
+        "navigationBarTitleText": "现场核销"
+      }
+    },
+    {
+      "path": "pages/materials/index",
+      "style": {
+        "navigationBarTitleText": "物资管理"
+      }
+    },
+    {
+      "path": "pages/tasks/index",
+      "style": {
+        "navigationBarTitleText": "待办工单"
+      }
+    }
+  ]
+}

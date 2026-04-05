@@ -1,0 +1,8 @@
+<view class="page">
+  <view class="hero">
+    <view class="name">当前会员</view>
+    <view class="desc">查看权益、凭证和售后记录</view>
+  </view>
+  <view wx:for="{{items}}" wx:key="*this" class="card">{{item}}</view>
+</view>
+

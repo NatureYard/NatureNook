@@ -1,0 +1,8 @@
+<view class="page">
+  <view wx:for="{{orders}}" wx:key="no" class="card">
+    <view class="name">{{item.type}}</view>
+    <view class="desc">{{item.no}}</view>
+    <view class="status">{{item.status}}</view>
+    <view class="status">金额：¥{{item.amount}}</view>
+  </view>
+</view>

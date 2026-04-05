@@ -1,0 +1,28 @@
+.page {
+  padding: 24rpx;
+}
+
+.card {
+  margin-bottom: 16rpx;
+  padding: 28rpx;
+  border-radius: 20rpx;
+  background: #ffffff;
+}
+
+.name {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.desc {
+  margin-top: 10rpx;
+  color: #6b7280;
+}
+
+.price {
+  margin-top: 14rpx;
+  color: #0f766e;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
