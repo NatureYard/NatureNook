@@ -1,53 +1,94 @@
-<view class="page">
-  <view class="hero">
-    <view class="hero-top">
-      <view>
-        <view class="title">{{memberName}}</view>
-        <view class="subtitle">{{memberMeta}}</view>
-      </view>
-      <view class="hero-action" bindtap="openProfile">会员中心</view>
+<view class="page page-stack">
+  <view class="hero-shell page-hero sun">
+    <view class="hero-orb hero-orb-left"></view>
+    <view class="hero-orb hero-orb-right"></view>
+    <view class="page-hero-top">
+      <view class="hero-badge">春日出游季</view>
+      <view class="hero-action ghost-button" bindtap="openProfile">会员中心</view>
     </view>
-    <view class="hero-stats">
-      <view class="hero-stat">
-        <view class="hero-stat-value">{{orderCount}}</view>
-        <view class="hero-stat-label">我的订单</view>
+
+    <view class="page-hero-copy">
+      <view class="hero-kicker">带上毛孩子，去一趟快乐乐园</view>
+      <view class="page-hero-title">{{memberName}}</view>
+      <view class="page-hero-text">{{memberMeta}}</view>
+    </view>
+
+    <view class="hero-action-row">
+      <view class="primary-button" bindtap="openTickets">立即购票</view>
+      <view class="secondary-button" bindtap="openOrders">查看凭证</view>
+    </view>
+
+    <view class="page-metrics">
+      <view class="page-metric">
+        <view class="page-metric-value">{{orderCount}}</view>
+        <view class="page-metric-label">近期订单</view>
       </view>
-      <view class="hero-stat">
-        <view class="hero-stat-value">{{quickEntries.length}}</view>
-        <view class="hero-stat-label">服务入口</view>
+      <view class="page-metric accent">
+        <view class="page-metric-value">{{quickEntries.length}}</view>
+        <view class="page-metric-label">精选入口</view>
       </view>
+    </view>
+
+    <view class="page-status-panel hero-status-row">
+      <view class="status-pill hero-status-pill">流程已同步</view>
+      <view class="page-status-note hero-status-copy">{{nextStepHint}}</view>
     </view>
   </view>
 
-  <view class="section">
+  <view wx:if="{{loading}}" class="loading-panel surface-card page-empty">
+    <view class="status-pill soft">正在同步</view>
+    <view class="page-empty-title loading-title">正在整理首页服务与会员信息</view>
+    <view class="helper-copy page-empty-copy">稍等片刻，入口、订单和会员权益会一起出现。</view>
+  </view>
+
+  <view wx:else class="section section-tight page-block">
     <view class="section-head">
-      <view class="section-title">活动横幅</view>
-      <view class="section-link" bindtap="openOrders">查看订单</view>
+      <view>
+        <view class="section-kicker">本周活动</view>
+        <view class="section-title">一眼挑中最适合的玩法</view>
+        <view class="section-copy">优先展示当下最值得操作的内容，减少无关干扰。</view>
+      </view>
+      <view class="section-link" bindtap="openOrders">订单进度</view>
     </view>
-    <view wx:for="{{banners}}" wx:key="*this" class="banner-item">
-      <view class="banner-tag">当期活动</view>
-      <view class="banner-title">{{item}}</view>
+    <view wx:for="{{banners}}" wx:key="title" class="banner-item {{item.toneClass}}">
+      <view class="banner-row">
+        <view class="banner-tag">{{item.tag}}</view>
+        <view class="banner-arrow">→</view>
+      </view>
+      <view class="banner-title">{{item.title}}</view>
+      <view class="banner-desc">{{item.desc}}</view>
     </view>
   </view>
 
-  <view class="section">
-    <view class="section-title">快捷入口</view>
+  <view class="section page-block">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">快捷服务</view>
+        <view class="section-title">从这里开始今天的行程</view>
+        <view class="section-copy">入口名称直接对应用户任务，不需要记住系统术语。</view>
+      </view>
+      <view class="section-link" bindtap="openTickets">去预约</view>
+    </view>
     <view class="quick-grid">
       <view
         wx:for="{{quickEntries}}"
         wx:key="label"
-        class="module-item"
+        class="module-item {{item.toneClass}}"
         data-path="{{item.path}}"
         bindtap="openEntry"
       >
+        <view class="module-kicker">{{item.kicker}}</view>
+        <view class="module-icon">{{item.icon}}</view>
         <view class="module-title">{{item.label}}</view>
         <view class="module-desc">{{item.desc}}</view>
+        <view class="module-link">进入服务 →</view>
       </view>
     </view>
   </view>
 
   <view class="tip-card">
-    <view class="tip-label">会员提示</view>
-    <view>{{activeCardTip}}</view>
+    <view class="tip-label">会员礼遇</view>
+    <view class="tip-title">让每次到店都更轻松</view>
+    <view class="tip-desc">{{activeCardTip}}</view>
   </view>
 </view>

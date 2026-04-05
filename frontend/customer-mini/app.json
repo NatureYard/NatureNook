@@ -8,9 +8,10 @@
     "pages/profile/index"
   ],
   "tabBar": {
-    "color": "#5b6470",
-    "selectedColor": "#0f766e",
-    "backgroundColor": "#ffffff",
+    "custom": true,
+    "color": "#8b7d6b",
+    "selectedColor": "#ff6b4a",
+    "backgroundColor": "#fff9f2",
     "list": [
       {
         "pagePath": "pages/index/index",
@@ -32,7 +33,7 @@
   },
   "window": {
     "navigationBarTitleText": "萌宠乐园",
-    "navigationBarBackgroundColor": "#ffffff",
-    "backgroundColor": "#f6fbfa"
+    "navigationBarBackgroundColor": "#fff9f2",
+    "backgroundColor": "#fff9f2"
   }
 }

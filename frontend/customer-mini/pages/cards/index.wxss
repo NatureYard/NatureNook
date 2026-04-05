@@ -1,54 +1,105 @@
-.page {
-  padding: 24rpx;
+.cards-page {
+  padding-top: 24rpx;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
 }
 
-.page-title {
-  font-size: 38rpx;
-  font-weight: 700;
-  color: #0f172a;
+.card-shell {
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 28rpx 70rpx rgba(214, 115, 85, 0.12);
 }
 
-.page-subtitle {
-  margin-top: 10rpx;
-  margin-bottom: 24rpx;
-  color: #64748b;
+.cards-hero {
+  padding: 0;
 }
 
-.card {
-  margin-bottom: 16rpx;
-  padding: 28rpx;
-  border-radius: 24rpx;
-  background: #ffffff;
-  box-shadow: 0 14rpx 40rpx rgba(15, 23, 42, 0.04);
+.membership-card {
+  margin-top: 20rpx;
+  padding: 30rpx;
+}
+
+.membership-card.peach {
+  background: linear-gradient(145deg, #fff7f0 0%, #fffdfb 100%);
+}
+
+.membership-card.mint {
+  background: linear-gradient(145deg, #f0fffb 0%, #ffffff 100%);
+}
+
+.membership-card.sunset {
+  background: linear-gradient(145deg, #fff0eb 0%, #fff8ed 100%);
+}
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.badge,
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.badge {
+  background: rgba(255, 135, 94, 0.14);
+  color: #ff7d59;
 }
 
 .name {
-  font-size: 32rpx;
+  margin-top: 16rpx;
+  font-size: 40rpx;
   font-weight: 700;
+  color: #2f2a24;
 }
 
-.desc {
-  margin-top: 10rpx;
-  color: #6b7280;
+.price-block {
+  text-align: right;
 }
 
-.meta {
-  margin-top: 10rpx;
-  color: #0f766e;
+.price-label {
   font-size: 24rpx;
+  color: #9a8777;
 }
 
 .price {
-  margin-top: 14rpx;
-  color: #b45309;
-  font-size: 34rpx;
+  margin-top: 10rpx;
+  font-size: 40rpx;
   font-weight: 700;
+  color: #ff7b57;
 }
 
-.empty-card {
-  padding: 56rpx 32rpx;
-  border-radius: 24rpx;
-  background: #ffffff;
-  color: #64748b;
-  text-align: center;
+.desc {
+  margin-top: 18rpx;
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #706255;
 }
+
+.meta-pill {
+  margin-top: 18rpx;
+  background: rgba(71, 182, 156, 0.12);
+  color: #2e7f71;
+}
+
+.footnote {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  line-height: 1.8;
+  color: #998677;
+}
+
+.empty-state {
+  margin-top: 20rpx;
+  padding: 56rpx 32rpx;
+  text-align: center;
+  color: #7d6d61;
+}
+

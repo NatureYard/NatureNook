@@ -53,6 +53,7 @@ npm run dev
 - Flyway migration 位于 `backend/src/main/resources/db/migration`
 - 当前仓库未生成 Gradle Wrapper，如需统一执行方式可后续补 `gradlew`
 - 当前已经补了基础写接口：新增会员、预约、人工放行、物资领用
+- UI/UX 设计规范已写入 `docs/pet-park-system-dev-spec.md` 第 15 章，作为前端设计与验收基线
 
 ## 新增接口约定
 

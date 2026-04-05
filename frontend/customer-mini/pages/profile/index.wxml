@@ -1,7 +1,22 @@
-<view class="page">
-  <view class="hero">
-    <view class="name">{{memberName}}</view>
-    <view class="desc">{{memberLevel}} · {{storeName}}</view>
+<view class="page profile-page page-stack">
+  <view class="hero card-shell page-hero sun">
+    <view class="page-hero-top">
+      <view class="status-pill soft">Member Lounge</view>
+      <view class="level-pill">{{memberLevelText}}</view>
+    </view>
+    <view class="page-hero-copy">
+      <view class="page-hero-title">{{memberName}}</view>
+      <view class="page-hero-text">归属门店：{{storeName}}</view>
+    </view>
+    <view class="page-status-panel">
+      <view class="status-pill soft">统一查看</view>
+      <view class="page-status-note">{{profileHint}}</view>
+    </view>
   </view>
-  <view wx:for="{{items}}" wx:key="*this" class="card">{{item}}</view>
+
+  <view class="section-title">会员概览</view>
+  <view wx:for="{{items}}" wx:key="title" class="card-shell profile-card">
+    <view class="item-title">{{item.title}}</view>
+    <view class="item-value">{{item.value}}</view>
+  </view>
 </view>

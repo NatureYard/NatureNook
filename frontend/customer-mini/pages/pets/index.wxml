@@ -1,18 +1,37 @@
-<view class="page">
-  <view class="page-title">我的宠物</view>
-  <view class="page-subtitle">查看宠物档案、品种和体重信息</view>
+<view class="page pets-page page-stack">
+  <view class="pets-hero card-shell page-hero mint">
+    <view class="page-hero-top">
+      <view class="status-pill mint">Pet Portrait</view>
+    </view>
+    <view class="page-hero-copy">
+      <view class="page-hero-title">我的宠物</view>
+      <view class="page-hero-text">{{summary}}</view>
+    </view>
+    <view class="page-status-panel">
+      <view class="status-pill mint">档案可复用</view>
+      <view class="page-status-note">{{archiveHint}}</view>
+    </view>
+  </view>
 
-  <view wx:if="{{loading}}" class="empty-card">正在加载宠物档案...</view>
+  <view wx:if="{{loading}}" class="page-empty empty-state card-shell">
+    <view class="status-pill soft">正在同步</view>
+    <view class="page-empty-copy">正在生成宠物档案...</view>
+  </view>
 
   <block wx:elif="{{pets.length}}">
-    <view wx:for="{{pets}}" wx:key="id" class="card">
-      <view class="pet-avatar">{{item.avatar}}</view>
-      <view class="pet-content">
+    <view class="pet-grid">
+      <view wx:for="{{pets}}" wx:key="id" class="card-shell pet-card {{item.tone}}">
+        <view class="pet-avatar">{{item.avatar}}</view>
+        <view class="pet-badge">{{item.speciesLabel}}</view>
         <view class="name">{{item.name}}</view>
         <view class="desc">{{item.meta}}</view>
+        <view class="pet-note">适合在预约、核验和会员旅程中快速识别这只毛孩子。</view>
       </view>
     </view>
   </block>
 
-  <view wx:else class="empty-card">暂无宠物档案</view>
+  <view wx:else class="page-empty empty-state card-shell">
+    <view class="status-pill soft">需要建档</view>
+    <view class="page-empty-copy">暂无宠物档案</view>
+  </view>
 </view>

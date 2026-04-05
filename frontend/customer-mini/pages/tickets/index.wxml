@@ -1,20 +1,50 @@
-<view class="page">
-  <view class="page-title">购票预约</view>
-  <view class="page-subtitle">选择门票、洗护和寄养服务</view>
+<view class="page page-stack">
+  <view class="progress-strip surface-card">
+    <view class="progress-head">
+      <view class="status-pill mint">预约流程</view>
+      <view class="progress-caption">1 选服务 · 2 填信息 · 3 完成预约</view>
+    </view>
+    <view class="helper-copy">{{progressNote}}</view>
+  </view>
 
-  <view wx:if="{{loading}}" class="empty-card">正在加载服务...</view>
+  <view class="hero-shell page-hero mint">
+    <view class="page-hero-copy">
+      <view class="hero-kicker">今日安排</view>
+      <view class="page-hero-title">选好服务，轻松到店</view>
+      <view class="page-hero-text">从门票、洗护到寄养，一次完成预约确认</view>
+    </view>
+    <view class="hero-meta-card">
+      <view>
+        <view class="hero-meta-label">当前会员</view>
+        <view class="hero-meta-value">{{memberName}}</view>
+        <view class="hero-meta-desc">{{storeName}}</view>
+      </view>
+      <view class="hero-price-panel">
+        <view class="hero-meta-label">起步价</view>
+        <view class="hero-price">¥{{selectedProductPrice || '--'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty-card page-empty">正在加载服务...</view>
 
   <block wx:elif="{{products.length}}">
-    <view class="context-card">
-      <view class="context-label">当前会员</view>
-      <view class="context-value">{{memberName}}</view>
-      <view class="context-desc">{{storeName}}</view>
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">步骤 1</view>
+        <view class="section-title">挑选最适合今天的服务</view>
+        <view class="section-copy">优先给出能直接决定的关键信息，降低来回比较成本。</view>
+      </view>
+      <view class="section-note">共 {{products.length}} 项</view>
     </view>
-
-    <view class="section-title">可预约服务</view>
-    <view wx:for="{{products}}" wx:key="code" class="card {{selectedProductCode === item.code ? 'selected' : ''}}">
+    <view wx:for="{{products}}" wx:key="code" class="card service-card {{item.toneClass}} {{selectedProductCode === item.code ? 'selected' : ''}}">
+      <view class="service-top">
+        <view class="service-badge">{{item.badge}}</view>
+        <view class="service-action-tag">{{selectedProductCode === item.code ? '已选中' : '可预约'}}</view>
+      </view>
       <view class="name">{{item.name}}</view>
       <view class="desc">{{item.desc}}</view>
+      <view class="service-accent">{{item.accent}}</view>
       <view class="card-foot">
         <view class="price">¥{{item.price}}</view>
         <view
@@ -27,8 +57,27 @@
       </view>
     </view>
 
+    <view class="selection-card {{selectedProductTone}}">
+      <view class="selection-head">
+        <view>
+          <view class="section-kicker">步骤 2</view>
+          <view class="selection-title">确认到店信息</view>
+        </view>
+        <view class="selection-badge">{{selectedProductBadge}}</view>
+      </view>
+      <view class="selection-name">{{selectedProductName}}</view>
+      <view class="selection-desc">{{selectedProductDesc}}</view>
+      <view class="selection-accent">{{selectedProductAccent}}</view>
+    </view>
+
     <view class="form-card">
       <view class="form-title">预约确认</view>
+      <view class="form-subtitle">补充宠物、日期和时段后即可提交</view>
+
+      <view wx:if="{{!pets.length}}" class="inline-alert">
+        <view class="status-pill soft">需要完善</view>
+        <view class="inline-alert-copy">当前没有可用宠物档案，暂时无法提交预约。</view>
+      </view>
 
       <view class="form-item">
         <view class="form-label">预约项目</view>
@@ -67,12 +116,15 @@
       </view>
 
       <view class="summary-card">
-        <view class="summary-label">应付金额</view>
+        <view>
+          <view class="summary-label">应付金额</view>
+          <view class="summary-caption">提交后可在订单页查看凭证</view>
+        </view>
         <view class="summary-price">¥{{selectedProductPrice}}</view>
       </view>
 
       <button class="submit-btn" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting || !pets.length}}">
-        提交预约
+        确认并预约
       </button>
     </view>
   </block>

@@ -44,7 +44,7 @@ public class CustomerMiniService {
     public CustomerHomeResponse home() {
         return new CustomerHomeResponse(
                 List.of("周末寄养优惠", "年卡限时折扣", "春季洗护套餐"),
-                List.of("购票预约", "卡种中心", "我的宠物", "入园凭证"),
+            List.of("购票 / 预约", "卡种中心", "我的宠物", "入园凭证"),
                 "年卡会员可在有效期内多次入园"
         );
     }
