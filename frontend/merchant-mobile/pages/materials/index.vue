@@ -18,6 +18,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { BASE_URL } from '../../config.js'
 
 const stocks = [
   { name: '犬用基础粮', category: '饲料', qty: '32kg' },
@@ -41,7 +42,7 @@ const message = ref('')
 
 function submit() {
   uni.request({
-    url: 'http://localhost:8080/api/admin/materials/issues',
+    url: `${BASE_URL}/api/admin/materials/issues`,
     method: 'POST',
     header: {
       'Content-Type': 'application/json',

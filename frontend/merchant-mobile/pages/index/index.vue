@@ -16,6 +16,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { BASE_URL } from '../../config.js'
 
 const items = ref([
   { title: '现场核销', desc: '订单核验、闸机异常、人工放行', count: 0, path: '/pages/checkin/index' },
@@ -27,7 +28,7 @@ const items = ref([
 
 onMounted(() => {
   uni.request({
-    url: 'http://localhost:8080/api/m-app/task-board',
+    url: `${BASE_URL}/api/m-app/task-board`,
     success: (res) => {
       const rows = res.data?.data || []
       items.value = [

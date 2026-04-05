@@ -36,8 +36,8 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { BASE_URL } from '../../config.js'
 
-const BASE_URL = 'http://localhost:8080'
 const orders = ref([])
 const message = ref('')
 const dailyMessage = ref('')
@@ -56,7 +56,7 @@ const dailyForm = ref({
   recordDate: '',
   healthNote: '',
   exceptionNote: '',
-  staffId: 2,
+  staffId: null,
 })
 
 onMounted(() => {

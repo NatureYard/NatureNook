@@ -55,6 +55,7 @@ public class GateDeviceService {
 
     public void reportEvent(GateEventReportRequest request) {
         commandRepository.updateHeartbeat(request.deviceCode(), "ONLINE");
+        commandRepository.logGateEvent(request.deviceCode(), request.eventType(), request.detail());
     }
 
     public void heartbeat(GateHeartbeatRequest request) {

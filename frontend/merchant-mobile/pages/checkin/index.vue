@@ -18,6 +18,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { BASE_URL } from '../../config.js'
 
 const rows = [
   { title: '待核销到店', desc: '处理预约到店和门票核销' },
@@ -37,7 +38,7 @@ const message = ref('')
 
 function submit() {
   uni.request({
-    url: 'http://localhost:8080/api/m-app/manual-releases',
+    url: `${BASE_URL}/api/m-app/manual-releases`,
     method: 'POST',
     header: {
       'Content-Type': 'application/json',

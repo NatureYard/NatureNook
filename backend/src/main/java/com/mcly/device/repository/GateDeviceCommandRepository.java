@@ -1,6 +1,5 @@
 package com.mcly.device.repository;
 
-import com.mcly.device.api.GateVerifyRequest;
 import java.sql.Types;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -35,5 +34,13 @@ public class GateDeviceCommandRepository {
                 ) values (?, ?, ?, ?, ?, ?, ?)
                 """,
                 memberId, storeId, deviceId, direction, result, riskFlag, reasonCode);
+    }
+
+    @Transactional
+    public void logGateEvent(String deviceCode, String eventType, String detail) {
+        jdbcTemplate.update("""
+                insert into gate_event_log (device_code, event_type, detail)
+                values (?, ?, ?)
+                """, deviceCode, eventType, detail);
     }
 }

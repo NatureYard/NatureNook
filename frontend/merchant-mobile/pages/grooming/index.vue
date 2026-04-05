@@ -34,8 +34,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-
-const BASE_URL = 'http://localhost:8080'
+import { BASE_URL } from '../../config.js'
 const orders = ref([])
 const message = ref('')
 const completeMessage = ref('')
