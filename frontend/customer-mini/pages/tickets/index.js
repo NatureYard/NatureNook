@@ -15,7 +15,7 @@ Page({
 
   makeReservation(e) {
     const product = e.currentTarget.dataset.product
-    const today = new Date().toISOString().slice(0, 10)
+    const todayStr = new Date().toISOString().slice(0, 10)
     wx.request({
       url: `${BASE_URL}/api/c-app/reservations`,
       method: 'POST',
@@ -24,7 +24,7 @@ Page({
         memberId: 1,
         storeId: 1,
         reservationType: product.type,
-        reservationDate: today,
+        reservationDate: todayStr,
         timeSlot: '09:00-12:00',
         amount: Number(product.price),
       },
