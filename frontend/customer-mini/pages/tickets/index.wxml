@@ -10,7 +10,7 @@
   <view class="hero-shell page-hero mint">
     <view class="page-hero-copy">
       <view class="hero-kicker">今日安排</view>
-      <view class="page-hero-title">选好服务，轻松到店</view>
+      <view id="tickets-page-title" class="page-hero-title">选好服务，轻松到店</view>
       <view class="page-hero-text">从门票、洗护到寄养，一次完成预约确认</view>
     </view>
     <view class="hero-meta-card">

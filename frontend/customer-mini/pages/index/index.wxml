@@ -9,12 +9,12 @@
 
     <view class="page-hero-copy">
       <view class="hero-kicker">带上毛孩子，去一趟快乐乐园</view>
-      <view class="page-hero-title">{{memberName}}</view>
+      <view id="home-member-name" class="page-hero-title">{{memberName}}</view>
       <view class="page-hero-text">{{memberMeta}}</view>
     </view>
 
     <view class="hero-action-row">
-      <view class="primary-button" bindtap="openTickets">立即购票</view>
+      <view id="home-open-tickets" class="primary-button" bindtap="openTickets">立即购票</view>
       <view class="secondary-button" bindtap="openOrders">查看凭证</view>
     </view>
 

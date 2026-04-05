@@ -1,0 +1,11 @@
+{
+  "name": "customer-mini",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:e2e": "node --test tests/e2e/**/*.test.mjs"
+  },
+  "dependencies": {
+    "miniprogram-automator": "^0.12.1"
+  }
+}
