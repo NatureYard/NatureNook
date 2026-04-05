@@ -108,6 +108,25 @@
         </div>
         <p v-if="submitMessage" class="hint">{{ submitMessage }}</p>
       </section>
+
+      <section v-if="activeSection === 'reservations'" class="panel">
+        <div class="panel-head">
+          <h3>新建预约</h3>
+        </div>
+        <div class="form-grid">
+          <input v-model="reservationForm.memberId" class="input" placeholder="会员ID" />
+          <select v-model="reservationForm.reservationType" class="input">
+            <option value="TICKET">TICKET</option>
+            <option value="BOARDING">BOARDING</option>
+            <option value="GROOMING">GROOMING</option>
+          </select>
+          <input v-model="reservationForm.reservationDate" class="input" placeholder="预约日期 yyyy-MM-dd" />
+          <input v-model="reservationForm.timeSlot" class="input" placeholder="时间段，如 09:00-12:00" />
+          <input v-model="reservationForm.amount" class="input" placeholder="金额" />
+          <button class="refresh" @click="submitReservation">提交</button>
+        </div>
+        <p v-if="submitMessage" class="hint">{{ submitMessage }}</p>
+      </section>
     </section>
   </main>
 </template>
@@ -118,6 +137,7 @@ import {
   createBoardingOrder,
   createGroomingOrder,
   createMember,
+  createReservation,
   fetchBoardingOrders,
   fetchCards,
   fetchDashboardSummary,
@@ -127,6 +147,7 @@ import {
   fetchMaterialStocks,
   fetchMembers,
   fetchPets,
+  fetchReservations,
   fetchRiskEvents,
 } from './api'
 
@@ -157,6 +178,14 @@ const groomingForm = ref({
   scheduledAt: '',
   totalFee: '',
 })
+const reservationForm = ref({
+  storeId: 1,
+  memberId: '',
+  reservationType: 'TICKET',
+  reservationDate: '',
+  timeSlot: '09:00-12:00',
+  amount: '',
+})
 const submitMessage = ref('')
 
 const sections = [
@@ -167,6 +196,7 @@ const sections = [
   { key: 'boarding', label: '寄养管理', meta: '笼位与喂养' },
   { key: 'grooming', label: '美容洗护', meta: '服务与完工' },
   { key: 'risks', label: '风控事件', meta: '预警与审计' },
+  { key: 'reservations', label: '预约订单', meta: '门票与服务' },
 ]
 
 const sectionMap = {
@@ -212,6 +242,12 @@ const sectionMap = {
     items: ['风险事件列表', '事件等级与类型', '关联主体信息', '处置状态追踪'],
     todos: ['增加风控规则配置', '补事件处置流转', '增加风控报表图表'],
   },
+  reservations: {
+    title: '预约订单管理',
+    summary: '管理消费者门票预约、寄养预约和洗护服务预约，支持改约、取消及退款联动。',
+    items: ['预约列表', '新建预约', '改约与取消', '退款联动'],
+    todos: ['增加改约流程', '补退款审批视图', '增加超容量预警'],
+  },
 }
 
 const currentSection = computed(() => sectionMap[activeSection.value])
@@ -240,6 +276,7 @@ const tableTitle = computed(() => {
   if (activeSection.value === 'boarding') return '寄养订单'
   if (activeSection.value === 'grooming') return '美容订单'
   if (activeSection.value === 'risks') return '风控事件'
+  if (activeSection.value === 'reservations') return '预约订单'
   return '经营汇总'
 })
 
@@ -296,6 +333,12 @@ async function refresh() {
       sectionData.value = events.map((item) => ({
         title: `[${item.eventLevel}] ${item.eventType}`,
         meta: `门店 ${item.storeName || '-'} | ${item.subjectType} #${item.subjectId} | ${item.status} | ${item.createdAt}`,
+      }))
+    } else if (activeSection.value === 'reservations') {
+      const reservations = await fetchReservations()
+      sectionData.value = reservations.map((item) => ({
+        title: `${item.memberName} - ${item.reservationType}`,
+        meta: `${item.storeName} | ${item.reservationDate} ${item.timeSlot} | 状态 ${item.status}`,
       }))
     } else {
       sectionData.value = [
@@ -361,6 +404,26 @@ async function submitGrooming() {
     await refresh()
   } catch (err) {
     submitMessage.value = err.message || '美容单创建失败'
+  }
+}
+
+async function submitReservation() {
+  submitMessage.value = ''
+  try {
+    const result = await createReservation({
+      storeId: Number(reservationForm.value.storeId),
+      memberId: Number(reservationForm.value.memberId),
+      reservationType: reservationForm.value.reservationType,
+      reservationDate: reservationForm.value.reservationDate,
+      timeSlot: reservationForm.value.timeSlot,
+      status: 'PENDING',
+      amount: reservationForm.value.amount ? Number(reservationForm.value.amount) : 0,
+    })
+    submitMessage.value = `预约创建成功，ID ${result.id}`
+    reservationForm.value = { storeId: 1, memberId: '', reservationType: 'TICKET', reservationDate: '', timeSlot: '09:00-12:00', amount: '' }
+    await refresh()
+  } catch (err) {
+    submitMessage.value = err.message || '预约创建失败'
   }
 }
 

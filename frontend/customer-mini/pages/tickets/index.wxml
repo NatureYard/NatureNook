@@ -3,6 +3,7 @@
     <view class="name">{{item.name}}</view>
     <view class="desc">{{item.desc}}</view>
     <view class="price">¥{{item.price}}</view>
+    <button class="btn-reserve" bindtap="makeReservation" data-product="{{item}}">立即预约</button>
   </view>
 </view>
 

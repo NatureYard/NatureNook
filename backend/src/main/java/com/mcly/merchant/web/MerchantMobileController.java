@@ -10,6 +10,9 @@ import com.mcly.grooming.api.CompleteGroomingRequest;
 import com.mcly.grooming.api.CreateGroomingOrderRequest;
 import com.mcly.grooming.api.GroomingOrderResponse;
 import com.mcly.grooming.service.GroomingService;
+import com.mcly.material.api.MaterialStockResponse;
+import com.mcly.material.api.ReportMaterialLossRequest;
+import com.mcly.material.service.MaterialService;
 import com.mcly.merchant.api.CreateManualReleaseRequest;
 import com.mcly.merchant.api.MerchantTaskResponse;
 import com.mcly.merchant.service.MerchantMobileService;
@@ -28,15 +31,18 @@ public class MerchantMobileController {
     private final MerchantMobileService merchantMobileService;
     private final BoardingService boardingService;
     private final GroomingService groomingService;
+    private final MaterialService materialService;
 
     public MerchantMobileController(
             MerchantMobileService merchantMobileService,
             BoardingService boardingService,
-            GroomingService groomingService
+            GroomingService groomingService,
+            MaterialService materialService
     ) {
         this.merchantMobileService = merchantMobileService;
         this.boardingService = boardingService;
         this.groomingService = groomingService;
+        this.materialService = materialService;
     }
 
     @GetMapping("/task-board")
@@ -78,5 +84,15 @@ public class MerchantMobileController {
     public ApiResponse<Void> completeGroomingOrder(@Valid @RequestBody CompleteGroomingRequest request) {
         groomingService.completeOrder(request);
         return ApiResponse.ok(null);
+    }
+
+    @GetMapping("/materials/stocks")
+    public ApiResponse<List<MaterialStockResponse>> listMaterialStocks() {
+        return ApiResponse.ok(materialService.listStocks());
+    }
+
+    @PostMapping("/materials/loss-report")
+    public ApiResponse<IdResponse> reportMaterialLoss(@Valid @RequestBody ReportMaterialLossRequest request) {
+        return ApiResponse.ok(new IdResponse(materialService.reportLoss(request)));
     }
 }

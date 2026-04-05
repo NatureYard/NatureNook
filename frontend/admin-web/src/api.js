@@ -62,6 +62,10 @@ export function fetchRiskEvents() {
   return request('/api/admin/risks/events')
 }
 
+export function fetchReservations() {
+  return request('/api/admin/reservations')
+}
+
 export async function createMember(payload) {
   return post('/api/admin/members', payload)
 }
@@ -72,5 +76,9 @@ export async function createBoardingOrder(payload) {
 
 export async function createGroomingOrder(payload) {
   return post('/api/admin/grooming/orders', payload)
+}
+
+export async function createReservation(payload) {
+  return post('/api/admin/reservations', payload)
 }
 

@@ -5,6 +5,7 @@ import com.mcly.common.api.IdResponse;
 import com.mcly.material.api.CreateMaterialIssueRequest;
 import com.mcly.material.api.MaterialCategoryResponse;
 import com.mcly.material.api.MaterialStockResponse;
+import com.mcly.material.api.ReportMaterialLossRequest;
 import com.mcly.material.service.MaterialService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -37,5 +38,10 @@ public class MaterialController {
     @PostMapping("/issues")
     public ApiResponse<IdResponse> createIssue(@Valid @RequestBody CreateMaterialIssueRequest request) {
         return ApiResponse.ok(new IdResponse(materialService.createIssue(request)));
+    }
+
+    @PostMapping("/loss-orders")
+    public ApiResponse<IdResponse> reportLoss(@Valid @RequestBody ReportMaterialLossRequest request) {
+        return ApiResponse.ok(new IdResponse(materialService.reportLoss(request)));
     }
 }
