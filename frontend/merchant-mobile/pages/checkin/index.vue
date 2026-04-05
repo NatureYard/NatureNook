@@ -9,6 +9,10 @@
           <view class="summary-value">{{ orders.length }}</view>
         </view>
         <view class="summary-item">
+          <view class="summary-label">待人工复核</view>
+          <view class="summary-value">{{ manualReviewCount }}</view>
+        </view>
+        <view class="summary-item">
           <view class="summary-label">最近核验</view>
           <view class="summary-value summary-text">{{ verifySummary }}</view>
         </view>
@@ -18,10 +22,23 @@
     </view>
 
     <view class="card">
-      <view class="title">到店核销队列</view>
+      <view class="row queue-head">
+        <view class="title">到店核销队列</view>
+        <view class="filter-row">
+          <button
+            v-for="filter in filters"
+            :key="filter.value"
+            class="filter-btn"
+            :class="activeFilter === filter.value ? 'filter-btn-active' : ''"
+            @click="activeFilter = filter.value"
+          >
+            {{ filter.label }}
+          </button>
+        </view>
+      </view>
       <view v-if="loading" class="desc">正在加载核销订单...</view>
-      <view v-else-if="!orders.length" class="desc">当前没有待核销订单</view>
-      <view v-else v-for="item in orders" :key="item.orderId" class="queue-item">
+      <view v-else-if="!filteredOrders.length" class="desc">当前筛选条件下没有待处理订单</view>
+      <view v-else v-for="item in filteredOrders" :key="item.orderId" class="queue-item">
         <view class="row">
           <view class="queue-title">{{ item.memberName }} · {{ item.petName }}</view>
           <view :class="['tag', item.activeEntitlement ? 'tag-ready' : 'tag-risk']">
@@ -32,6 +49,7 @@
         <view class="desc">{{ item.storeName }} | {{ item.reservationInfo }}</view>
         <view class="desc">人脸录入：{{ item.faceBound ? '已录入' : '未录入' }}</view>
         <view class="desc">资格：{{ item.entitlementText }}</view>
+        <view v-if="!item.activeEntitlement" class="risk-copy">建议先复核资格和订单状态，再决定是否人工放行。</view>
         <view class="action-row">
           <button class="mini-btn" @click="fillManualRelease(item)">带入人工放行</button>
           <button class="mini-btn primary-mini-btn" :disabled="verifyingOrderId === item.orderId" @click="verify(item)">
@@ -49,6 +67,7 @@
 
     <view class="card">
       <view class="title">人工放行登记</view>
+      <view class="desc">{{ manualReleaseHint }}</view>
       <input v-model="form.memberId" class="input" placeholder="会员ID" />
       <input v-model="form.orderId" class="input" placeholder="订单ID" />
       <input v-model="form.reason" class="input" placeholder="放行原因" />
@@ -68,6 +87,13 @@ const verifyingOrderId = ref(null)
 const lastVerifyResult = ref(null)
 const message = ref('')
 const deviceCode = ref('GATE-SH-001')
+const activeFilter = ref('ALL')
+
+const filters = [
+  { value: 'ALL', label: '全部' },
+  { value: 'READY', label: '可核销' },
+  { value: 'REVIEW', label: '待复核' },
+]
 
 const form = ref({
   storeId: 1,
@@ -80,6 +106,27 @@ const form = ref({
 const verifySummary = computed(() => {
   if (!lastVerifyResult.value) return '暂无'
   return lastVerifyResult.value.allowed ? '最近一次已放行' : '最近一次被拦截'
+})
+
+const manualReviewCount = computed(() => {
+  return orders.value.filter((item) => !item.activeEntitlement).length
+})
+
+const filteredOrders = computed(() => {
+  if (activeFilter.value === 'READY') {
+    return orders.value.filter((item) => item.activeEntitlement)
+  }
+  if (activeFilter.value === 'REVIEW') {
+    return orders.value.filter((item) => !item.activeEntitlement)
+  }
+  return orders.value
+})
+
+const manualReleaseHint = computed(() => {
+  if (form.value.memberId || form.value.orderId) {
+    return `当前带入会员 ${form.value.memberId || '-'}，订单 ${form.value.orderId || '-'}，请补充放行原因。`
+  }
+  return '当闸机拦截且现场复核后需要放行时，可先从上方队列带入订单。'
 })
 
 onMounted(() => {
@@ -283,10 +330,12 @@ function submit() {
   display: flex;
   gap: 16rpx;
   margin-top: 16rpx;
+  flex-wrap: wrap;
 }
 
 .summary-item {
   flex: 1;
+  min-width: 0;
   padding: 20rpx;
   border-radius: 16rpx;
   background: var(--surface-highlight-success);
@@ -306,6 +355,31 @@ function submit() {
 
 .summary-text {
   font-size: 28rpx;
+}
+
+.queue-head {
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  justify-content: flex-end;
+}
+
+.filter-btn {
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  background: var(--surface-soft);
+  color: var(--text-secondary);
+  font-size: 24rpx;
+}
+
+.filter-btn-active {
+  background: var(--brand-secondary);
+  color: #fff;
 }
 
 .input {
@@ -335,6 +409,12 @@ function submit() {
 .desc {
   margin-top: 10rpx;
   color: var(--text-secondary);
+}
+
+.risk-copy {
+  margin-top: 12rpx;
+  color: var(--state-risk-fg);
+  font-size: 24rpx;
 }
 
 .queue-item {

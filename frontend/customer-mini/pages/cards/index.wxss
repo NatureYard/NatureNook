@@ -22,11 +22,7 @@
 
 .badge,
 .meta-pill {
-  display: inline-flex;
-  align-items: center;
   padding: 10rpx 18rpx;
-  border-radius: 999rpx;
-  font-size: 24rpx;
   font-weight: 600;
 }
 
@@ -76,7 +72,5 @@
 
 .empty-state {
   margin-top: 20rpx;
-  padding: 56rpx 32rpx;
-  text-align: center;
 }
 

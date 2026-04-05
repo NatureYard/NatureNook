@@ -19,8 +19,6 @@
 
 .section-title {
   margin: 32rpx 4rpx 16rpx;
-  font-size: 36rpx;
-  font-weight: 700;
 }
 
 .profile-card {

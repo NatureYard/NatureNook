@@ -73,16 +73,12 @@
 }
 
 .section-head {
-  display: flex;
   align-items: flex-end;
-  justify-content: space-between;
   margin-top: 28rpx;
 }
 
 .section-title {
   margin-top: 10rpx;
-  font-size: 36rpx;
-  font-weight: 700;
   color: #2e2a26;
 }
 
@@ -116,8 +112,6 @@
 .service-action-tag,
 .selection-badge {
   padding: 10rpx 16rpx;
-  border-radius: 999rpx;
-  font-size: 24rpx;
   font-weight: 700;
 }
 
