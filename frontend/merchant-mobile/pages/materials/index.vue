@@ -13,17 +13,54 @@
       <button class="btn" @click="submit">提交领用</button>
       <view v-if="message" class="desc">{{ message }}</view>
     </view>
+
+    <view class="card">
+      <view class="title">报损上报</view>
+      <input v-model="lossForm.materialItemId" class="input" placeholder="物资ID" />
+      <input v-model="lossForm.quantity" class="input" placeholder="报损数量" />
+      <input v-model="lossForm.unit" class="input" placeholder="单位，如 瓶、kg" />
+      <input v-model="lossForm.reason" class="input" placeholder="报损原因" />
+      <button class="btn" @click="submitLoss">提交报损</button>
+      <view v-if="lossMessage" class="desc">{{ lossMessage }}</view>
+    </view>
   </view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { BASE_URL } from '../../config.js'
 
-const stocks = [
+const defaultStocks = [
   { name: '犬用基础粮', category: '饲料', qty: '32kg' },
   { name: '地面消毒液', category: '清洁用品', qty: '16瓶' },
   { name: '低敏沐浴露', category: '洗护耗材', qty: '6瓶' },
 ]
+
+const stocks = ref([...defaultStocks])
+
+function fetchStocks() {
+  uni.request({
+    url: `${BASE_URL}/api/m-app/materials/stocks`,
+    method: 'GET',
+    success: (res) => {
+      const data = res.data?.data
+      if (Array.isArray(data) && data.length > 0) {
+        stocks.value = data.map((item) => ({
+          name: item.name,
+          category: item.category,
+          qty: `${item.quantity}${item.unit}`,
+        }))
+      } else {
+        stocks.value = [...defaultStocks]
+      }
+    },
+    fail: () => {
+      stocks.value = [...defaultStocks]
+    },
+  })
+}
+
+onMounted(fetchStocks)
 
 const form = ref({
   storeId: 1,
@@ -41,7 +78,7 @@ const message = ref('')
 
 function submit() {
   uni.request({
-    url: 'http://localhost:8080/api/admin/materials/issues',
+    url: `${BASE_URL}/api/admin/materials/issues`,
     method: 'POST',
     header: {
       'Content-Type': 'application/json',
@@ -61,6 +98,44 @@ function submit() {
     },
     fail: () => {
       message.value = '提交失败'
+    },
+  })
+}
+
+const lossForm = ref({
+  storeId: 1,
+  warehouseId: 1,
+  staffId: 2,
+  materialItemId: '',
+  quantity: '',
+  unit: '瓶',
+  reason: '',
+  remark: '商户移动端报损',
+})
+
+const lossMessage = ref('')
+
+function submitLoss() {
+  uni.request({
+    url: `${BASE_URL}/api/m-app/materials/loss-report`,
+    method: 'POST',
+    header: {
+      'Content-Type': 'application/json',
+    },
+    data: {
+      ...lossForm.value,
+      materialItemId: Number(lossForm.value.materialItemId),
+      quantity: Number(lossForm.value.quantity),
+    },
+    success: (res) => {
+      const id = res.data?.data?.id
+      lossMessage.value = id ? `报损成功，单号 ${id}` : '报损已提交'
+      lossForm.value.materialItemId = ''
+      lossForm.value.quantity = ''
+      lossForm.value.reason = ''
+    },
+    fail: () => {
+      lossMessage.value = '提交失败'
     },
   })
 }

@@ -78,6 +78,55 @@
         </div>
         <p v-if="submitMessage" class="hint">{{ submitMessage }}</p>
       </section>
+
+      <section v-if="activeSection === 'boarding'" class="panel">
+        <div class="panel-head">
+          <h3>新建寄养单</h3>
+        </div>
+        <div class="form-grid">
+          <input v-model="boardingForm.memberId" class="input" placeholder="会员ID" />
+          <input v-model="boardingForm.petId" class="input" placeholder="宠物ID" />
+          <input v-model="boardingForm.cageNo" class="input" placeholder="笼位编号" />
+          <input v-model="boardingForm.checkInTime" class="input" placeholder="入住时间 yyyy-MM-ddTHH:mm:ss" />
+          <input v-model="boardingForm.plannedCheckOutTime" class="input" placeholder="计划离园时间 yyyy-MM-ddTHH:mm:ss" />
+          <button class="refresh" @click="submitBoarding">提交</button>
+        </div>
+        <p v-if="submitMessage" class="hint">{{ submitMessage }}</p>
+      </section>
+
+      <section v-if="activeSection === 'grooming'" class="panel">
+        <div class="panel-head">
+          <h3>新建美容单</h3>
+        </div>
+        <div class="form-grid">
+          <input v-model="groomingForm.memberId" class="input" placeholder="会员ID" />
+          <input v-model="groomingForm.petId" class="input" placeholder="宠物ID" />
+          <input v-model="groomingForm.staffId" class="input" placeholder="技师员工ID（可选）" />
+          <input v-model="groomingForm.scheduledAt" class="input" placeholder="预约时间 yyyy-MM-ddTHH:mm:ss（可选）" />
+          <input v-model="groomingForm.totalFee" class="input" placeholder="服务费用" />
+          <button class="refresh" @click="submitGrooming">提交</button>
+        </div>
+        <p v-if="submitMessage" class="hint">{{ submitMessage }}</p>
+      </section>
+
+      <section v-if="activeSection === 'reservations'" class="panel">
+        <div class="panel-head">
+          <h3>新建预约</h3>
+        </div>
+        <div class="form-grid">
+          <input v-model="reservationForm.memberId" class="input" placeholder="会员ID" />
+          <select v-model="reservationForm.reservationType" class="input">
+            <option value="TICKET">TICKET</option>
+            <option value="BOARDING">BOARDING</option>
+            <option value="GROOMING">GROOMING</option>
+          </select>
+          <input v-model="reservationForm.reservationDate" class="input" placeholder="预约日期 yyyy-MM-dd" />
+          <input v-model="reservationForm.timeSlot" class="input" placeholder="时间段，如 09:00-12:00" />
+          <input v-model="reservationForm.amount" class="input" placeholder="金额" />
+          <button class="refresh" @click="submitReservation">提交</button>
+        </div>
+        <p v-if="submitMessage" class="hint">{{ submitMessage }}</p>
+      </section>
     </section>
   </main>
 </template>
@@ -85,14 +134,21 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import {
+  createBoardingOrder,
+  createGroomingOrder,
   createMember,
+  createReservation,
+  fetchBoardingOrders,
   fetchCards,
   fetchDashboardSummary,
   fetchGateEvents,
   fetchGateRules,
+  fetchGroomingOrders,
   fetchMaterialStocks,
   fetchMembers,
   fetchPets,
+  fetchReservations,
+  fetchRiskEvents,
 } from './api'
 
 const activeSection = ref('dashboard')
@@ -106,6 +162,30 @@ const createForm = ref({
   phone: '',
   level: 'NORMAL',
 })
+const boardingForm = ref({
+  storeId: 1,
+  memberId: '',
+  petId: '',
+  cageNo: '',
+  checkInTime: '',
+  plannedCheckOutTime: '',
+})
+const groomingForm = ref({
+  storeId: 1,
+  memberId: '',
+  petId: '',
+  staffId: '',
+  scheduledAt: '',
+  totalFee: '',
+})
+const reservationForm = ref({
+  storeId: 1,
+  memberId: '',
+  reservationType: 'TICKET',
+  reservationDate: '',
+  timeSlot: '09:00-12:00',
+  amount: '',
+})
 const submitMessage = ref('')
 
 const sections = [
@@ -113,6 +193,10 @@ const sections = [
   { key: 'gate', label: '闸机通行', meta: '入园风控' },
   { key: 'materials', label: '物资管理', meta: '饲料与耗材' },
   { key: 'members', label: '会员与宠物', meta: '卡种与档案' },
+  { key: 'boarding', label: '寄养管理', meta: '笼位与喂养' },
+  { key: 'grooming', label: '美容洗护', meta: '服务与完工' },
+  { key: 'risks', label: '风控事件', meta: '预警与审计' },
+  { key: 'reservations', label: '预约订单', meta: '门票与服务' },
 ]
 
 const sectionMap = {
@@ -140,6 +224,30 @@ const sectionMap = {
     items: ['会员列表', '宠物档案', '卡种与续费', '人脸绑定状态'],
     todos: ['增加卡种详情页', '补售后记录视图', '增加会员检索条件'],
   },
+  boarding: {
+    title: '寄养管理',
+    summary: '记录宠物入住、笼位分配、每日喂养与健康状况，及出园结算。',
+    items: ['寄养订单列表', '新建寄养单', '每日记录登记', '异常事件上报'],
+    todos: ['补出园结算流程', '增加物资消耗联动', '增加宠物健康趋势'],
+  },
+  grooming: {
+    title: '美容洗护管理',
+    summary: '覆盖美容订单创建、技师分配、完工确认和耗材消耗记录。',
+    items: ['美容订单列表', '新建美容单', '完工登记', '耗材关联'],
+    todos: ['增加技师工单视图', '补现场照片上传', '增加服务评价'],
+  },
+  risks: {
+    title: '风控事件中心',
+    summary: '汇总高频人工放行、无订单放行、低库存预警等风险事件，支持门店复核与总部审计。',
+    items: ['风险事件列表', '事件等级与类型', '关联主体信息', '处置状态追踪'],
+    todos: ['增加风控规则配置', '补事件处置流转', '增加风控报表图表'],
+  },
+  reservations: {
+    title: '预约订单管理',
+    summary: '管理消费者门票预约、寄养预约和洗护服务预约，支持改约、取消及退款联动。',
+    items: ['预约列表', '新建预约', '改约与取消', '退款联动'],
+    todos: ['增加改约流程', '补退款审批视图', '增加超容量预警'],
+  },
 }
 
 const currentSection = computed(() => sectionMap[activeSection.value])
@@ -165,6 +273,10 @@ const tableTitle = computed(() => {
   if (activeSection.value === 'gate') return '闸机实时数据'
   if (activeSection.value === 'materials') return '库存与预警'
   if (activeSection.value === 'members') return '会员与宠物数据'
+  if (activeSection.value === 'boarding') return '寄养订单'
+  if (activeSection.value === 'grooming') return '美容订单'
+  if (activeSection.value === 'risks') return '风控事件'
+  if (activeSection.value === 'reservations') return '预约订单'
   return '经营汇总'
 })
 
@@ -204,6 +316,30 @@ async function refresh() {
           meta: `${item.status} | 到期 ${item.validTo}`,
         })),
       ]
+    } else if (activeSection.value === 'boarding') {
+      const orders = await fetchBoardingOrders()
+      sectionData.value = orders.map((item) => ({
+        title: `${item.petName} (${item.memberName})`,
+        meta: `笼位 ${item.cageNo || '-'} | 入住 ${item.checkInTime} | 状态 ${item.status}`,
+      }))
+    } else if (activeSection.value === 'grooming') {
+      const orders = await fetchGroomingOrders()
+      sectionData.value = orders.map((item) => ({
+        title: `${item.petName} (${item.memberName})`,
+        meta: `技师 ${item.staffName || '-'} | 预约 ${item.scheduledAt || '-'} | 状态 ${item.status}`,
+      }))
+    } else if (activeSection.value === 'risks') {
+      const events = await fetchRiskEvents()
+      sectionData.value = events.map((item) => ({
+        title: `[${item.eventLevel}] ${item.eventType}`,
+        meta: `门店 ${item.storeName || '-'} | ${item.subjectType} #${item.subjectId} | ${item.status} | ${item.createdAt}`,
+      }))
+    } else if (activeSection.value === 'reservations') {
+      const reservations = await fetchReservations()
+      sectionData.value = reservations.map((item) => ({
+        title: `${item.memberName} - ${item.reservationType}`,
+        meta: `${item.storeName} | ${item.reservationDate} ${item.timeSlot} | 状态 ${item.status}`,
+      }))
     } else {
       sectionData.value = [
         { title: '总会员数', meta: String(summary.value.totalMembers) },
@@ -230,6 +366,64 @@ async function submitMember() {
     }
   } catch (err) {
     submitMessage.value = err.message || '会员创建失败'
+  }
+}
+
+async function submitBoarding() {
+  submitMessage.value = ''
+  try {
+    const result = await createBoardingOrder({
+      storeId: Number(boardingForm.value.storeId),
+      memberId: Number(boardingForm.value.memberId),
+      petId: Number(boardingForm.value.petId),
+      cageNo: boardingForm.value.cageNo,
+      checkInTime: boardingForm.value.checkInTime,
+      plannedCheckOutTime: boardingForm.value.plannedCheckOutTime,
+    })
+    submitMessage.value = `寄养单创建成功，ID ${result.id}`
+    boardingForm.value = { storeId: 1, memberId: '', petId: '', cageNo: '', checkInTime: '', plannedCheckOutTime: '' }
+    await refresh()
+  } catch (err) {
+    submitMessage.value = err.message || '寄养单创建失败'
+  }
+}
+
+async function submitGrooming() {
+  submitMessage.value = ''
+  try {
+    const result = await createGroomingOrder({
+      storeId: Number(groomingForm.value.storeId),
+      memberId: Number(groomingForm.value.memberId),
+      petId: Number(groomingForm.value.petId),
+      staffId: groomingForm.value.staffId ? Number(groomingForm.value.staffId) : null,
+      scheduledAt: groomingForm.value.scheduledAt || null,
+      totalFee: groomingForm.value.totalFee ? Number(groomingForm.value.totalFee) : 0,
+    })
+    submitMessage.value = `美容单创建成功，ID ${result.id}`
+    groomingForm.value = { storeId: 1, memberId: '', petId: '', staffId: '', scheduledAt: '', totalFee: '' }
+    await refresh()
+  } catch (err) {
+    submitMessage.value = err.message || '美容单创建失败'
+  }
+}
+
+async function submitReservation() {
+  submitMessage.value = ''
+  try {
+    const result = await createReservation({
+      storeId: Number(reservationForm.value.storeId),
+      memberId: Number(reservationForm.value.memberId),
+      reservationType: reservationForm.value.reservationType,
+      reservationDate: reservationForm.value.reservationDate,
+      timeSlot: reservationForm.value.timeSlot,
+      status: 'PENDING',
+      amount: reservationForm.value.amount ? Number(reservationForm.value.amount) : 0,
+    })
+    submitMessage.value = `预约创建成功，ID ${result.id}`
+    reservationForm.value = { storeId: 1, memberId: '', reservationType: 'TICKET', reservationDate: '', timeSlot: '09:00-12:00', amount: '' }
+    await refresh()
+  } catch (err) {
+    submitMessage.value = err.message || '预约创建失败'
   }
 }
 

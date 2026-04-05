@@ -13,6 +13,18 @@
       }
     },
     {
+      "path": "pages/boarding/index",
+      "style": {
+        "navigationBarTitleText": "寄养管理"
+      }
+    },
+    {
+      "path": "pages/grooming/index",
+      "style": {
+        "navigationBarTitleText": "美容洗护"
+      }
+    },
+    {
       "path": "pages/materials/index",
       "style": {
         "navigationBarTitleText": "物资管理"
