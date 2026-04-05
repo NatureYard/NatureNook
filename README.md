@@ -50,3 +50,5 @@ npm run dev
 - Flyway migration 位于 `backend/src/main/resources/db/migration`
 - 当前仓库未生成 Gradle Wrapper，如需统一执行方式可后续补 `gradlew`
 - 当前已经补了基础写接口：新增会员、预约、人工放行、物资领用
+- GitHub Actions CI 位于 `.github/workflows/ci.yml`
+- 本地 Git hooks 说明位于 `docs/git-hooks.md`

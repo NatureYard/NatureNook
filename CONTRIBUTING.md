@@ -51,6 +51,17 @@ git commit -m "feat: add material issue workflow"
 git push -u origin feature/your-change
 ```
 
+## Local Hooks
+
+建议在本地启用仓库自带 hooks：
+
+```bash
+git config core.hooksPath .githooks
+chmod +x .githooks/pre-commit .githooks/commit-msg
+```
+
+详细说明见 `docs/git-hooks.md`。
+
 ## Pull Request Rules
 
 - PR 必须聚焦单一主题，避免混入不相关改动。
@@ -80,4 +91,3 @@ git push -u origin feature/your-change
   - 禁止强推
   - 至少 1 个 PR 审核通过
   - 建议通过基础 CI
-

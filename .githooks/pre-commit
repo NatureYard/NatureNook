@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "[pre-commit] checking staged files"
+
+staged_files="$(git diff --cached --name-only --diff-filter=ACM)"
+
+if [ -z "${staged_files}" ]; then
+  exit 0
+fi
+
+if git diff --cached --check; then
+  :
+else
+  echo "[pre-commit] whitespace or merge-marker issues detected"
+  exit 1
+fi
+
+echo "[pre-commit] ok"

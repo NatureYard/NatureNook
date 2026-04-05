@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+message_file="$1"
+message="$(head -n 1 "$message_file")"
+
+pattern='^(feat|fix|refactor|docs|chore|test): .+'
+
+if [[ "$message" =~ $pattern ]]; then
+  exit 0
+fi
+
+echo "[commit-msg] invalid commit message: $message"
+echo "[commit-msg] expected format: <type>: <summary>"
+echo "[commit-msg] allowed types: feat, fix, refactor, docs, chore, test"
+exit 1
