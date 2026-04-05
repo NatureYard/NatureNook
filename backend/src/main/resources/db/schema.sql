@@ -77,6 +77,7 @@ create table if not exists customer_order (
     id bigserial primary key,
     member_id bigint not null references member(id),
     store_id bigint not null references store(id),
+    reservation_id bigint references reservation(id),
     order_no varchar(64) not null unique,
     order_type varchar(32) not null,
     status varchar(32) not null,
@@ -206,4 +207,3 @@ create index if not exists idx_entry_exit_store_time on entry_exit_record(store_
 create index if not exists idx_manual_release_store_time on manual_release_record(store_id, created_at desc);
 create index if not exists idx_material_stock_item on material_stock(material_item_id);
 create index if not exists idx_risk_event_store_time on risk_event(store_id, created_at desc);
-

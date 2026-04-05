@@ -19,5 +19,8 @@ public abstract class QuerySupport {
     protected <T> List<T> query(String sql, org.springframework.jdbc.core.RowMapper<T> rowMapper) {
         return jdbcTemplate.query(sql, rowMapper);
     }
-}
 
+    protected <T> List<T> query(String sql, org.springframework.jdbc.core.RowMapper<T> rowMapper, Object... args) {
+        return jdbcTemplate.query(sql, rowMapper, args);
+    }
+}

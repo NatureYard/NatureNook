@@ -1,8 +1,17 @@
 <view class="page">
-  <view wx:for="{{cards}}" wx:key="name" class="card">
-    <view class="name">{{item.name}}</view>
-    <view class="desc">{{item.desc}}</view>
-    <view class="price">¥{{item.price}}</view>
-  </view>
-</view>
+  <view class="page-title">卡种中心</view>
+  <view class="page-subtitle">查看可用权益和当前卡种状态</view>
 
+  <view wx:if="{{loading}}" class="empty-card">正在加载卡种...</view>
+
+  <block wx:elif="{{cards.length}}">
+    <view wx:for="{{cards}}" wx:key="id" class="card">
+      <view class="name">{{item.name}}</view>
+      <view class="desc">{{item.desc}}</view>
+      <view class="meta">{{item.meta}}</view>
+      <view class="price">¥{{item.price}}</view>
+    </view>
+  </block>
+
+  <view wx:else class="empty-card">暂无卡种信息</view>
+</view>

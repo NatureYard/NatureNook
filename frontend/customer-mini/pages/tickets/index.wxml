@@ -1,8 +1,81 @@
 <view class="page">
-  <view wx:for="{{products}}" wx:key="name" class="card">
-    <view class="name">{{item.name}}</view>
-    <view class="desc">{{item.desc}}</view>
-    <view class="price">¥{{item.price}}</view>
-  </view>
-</view>
+  <view class="page-title">购票预约</view>
+  <view class="page-subtitle">选择门票、洗护和寄养服务</view>
 
+  <view wx:if="{{loading}}" class="empty-card">正在加载服务...</view>
+
+  <block wx:elif="{{products.length}}">
+    <view class="context-card">
+      <view class="context-label">当前会员</view>
+      <view class="context-value">{{memberName}}</view>
+      <view class="context-desc">{{storeName}}</view>
+    </view>
+
+    <view class="section-title">可预约服务</view>
+    <view wx:for="{{products}}" wx:key="code" class="card {{selectedProductCode === item.code ? 'selected' : ''}}">
+      <view class="name">{{item.name}}</view>
+      <view class="desc">{{item.desc}}</view>
+      <view class="card-foot">
+        <view class="price">¥{{item.price}}</view>
+        <view
+          class="action {{selectedProductCode === item.code ? 'active' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectProduct"
+        >
+          {{selectedProductCode === item.code ? '已选择' : '立即预约'}}
+        </view>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <view class="form-title">预约确认</view>
+
+      <view class="form-item">
+        <view class="form-label">预约项目</view>
+        <view class="form-value">{{selectedProductName}}</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">服务说明</view>
+        <view class="form-value muted">{{selectedProductDesc}}</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">预约门店</view>
+        <view class="form-value">{{storeName}}</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">宠物档案</view>
+        <picker range="{{petNames}}" value="{{selectedPetIndex}}" bindchange="bindPetChange">
+          <view class="picker-value">{{selectedPetName}}</view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">预约日期</view>
+        <picker mode="date" value="{{reservationDate}}" start="{{today}}" bindchange="bindDateChange">
+          <view class="picker-value">{{reservationDate}}</view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">预约时段</view>
+        <picker range="{{timeSlots}}" value="{{timeSlotIndex}}" bindchange="bindTimeSlotChange">
+          <view class="picker-value">{{selectedTimeSlot}}</view>
+        </picker>
+      </view>
+
+      <view class="summary-card">
+        <view class="summary-label">应付金额</view>
+        <view class="summary-price">¥{{selectedProductPrice}}</view>
+      </view>
+
+      <button class="submit-btn" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting || !pets.length}}">
+        提交预约
+      </button>
+    </view>
+  </block>
+
+  <view wx:else class="empty-card">暂无可预约服务</view>
+</view>

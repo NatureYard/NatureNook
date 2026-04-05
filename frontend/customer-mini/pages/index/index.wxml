@@ -1,20 +1,53 @@
 <view class="page">
   <view class="hero">
-    <view class="title">萌宠乐园消费者小程序</view>
-    <view class="subtitle">购票、预约、卡种、宠物档案和入园凭证统一入口</view>
+    <view class="hero-top">
+      <view>
+        <view class="title">{{memberName}}</view>
+        <view class="subtitle">{{memberMeta}}</view>
+      </view>
+      <view class="hero-action" bindtap="openProfile">会员中心</view>
+    </view>
+    <view class="hero-stats">
+      <view class="hero-stat">
+        <view class="hero-stat-value">{{orderCount}}</view>
+        <view class="hero-stat-label">我的订单</view>
+      </view>
+      <view class="hero-stat">
+        <view class="hero-stat-value">{{quickEntries.length}}</view>
+        <view class="hero-stat-label">服务入口</view>
+      </view>
+    </view>
   </view>
 
   <view class="section">
-    <view class="section-title">活动横幅</view>
-    <view wx:for="{{banners}}" wx:key="*this" class="banner-item">{{item}}</view>
+    <view class="section-head">
+      <view class="section-title">活动横幅</view>
+      <view class="section-link" bindtap="openOrders">查看订单</view>
+    </view>
+    <view wx:for="{{banners}}" wx:key="*this" class="banner-item">
+      <view class="banner-tag">当期活动</view>
+      <view class="banner-title">{{item}}</view>
+    </view>
   </view>
 
   <view class="section">
     <view class="section-title">快捷入口</view>
     <view class="quick-grid">
-      <view wx:for="{{quickEntries}}" wx:key="*this" class="module-item">{{item}}</view>
+      <view
+        wx:for="{{quickEntries}}"
+        wx:key="label"
+        class="module-item"
+        data-path="{{item.path}}"
+        bindtap="openEntry"
+      >
+        <view class="module-title">{{item.label}}</view>
+        <view class="module-desc">{{item.desc}}</view>
+      </view>
     </view>
   </view>
 
-  <view class="tip-card">{{activeCardTip}}</view>
+  <view class="tip-card">
+    <view class="tip-label">会员提示</view>
+    <view>{{activeCardTip}}</view>
+  </view>
 </view>

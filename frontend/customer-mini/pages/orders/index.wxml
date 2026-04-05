@@ -1,8 +1,23 @@
 <view class="page">
-  <view wx:for="{{orders}}" wx:key="no" class="card">
-    <view class="name">{{item.type}}</view>
-    <view class="desc">{{item.no}}</view>
-    <view class="status">{{item.status}}</view>
-    <view class="status">金额：¥{{item.amount}}</view>
+  <view class="page-title">我的订单</view>
+  <view class="page-subtitle">查看门票、卡种和服务预约的支付状态</view>
+
+  <view wx:if="{{loading}}" class="empty-card">正在加载订单...</view>
+
+  <block wx:elif="{{orders.length}}">
+    <view wx:for="{{orders}}" wx:key="no" class="card">
+      <view class="card-top">
+        <view class="name">{{item.type}}</view>
+        <view class="badge {{item.statusClass}}">{{item.status}}</view>
+      </view>
+      <view class="desc">{{item.no}}</view>
+      <view class="meta">{{item.storeName}}</view>
+      <view class="meta">{{item.reservationInfo}}</view>
+      <view class="amount">金额：¥{{item.amount}}</view>
+    </view>
+  </block>
+
+  <view wx:else class="empty-card">
+    暂无订单记录
   </view>
 </view>
