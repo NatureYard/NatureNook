@@ -7,6 +7,13 @@ const entryPathMap = {
   '入园凭证': '/pages/orders/index',
 }
 
+const entryTestKeyMap = {
+  '购票 / 预约': 'tickets',
+  '卡种中心': 'cards',
+  '我的宠物': 'pets',
+  '入园凭证': 'orders',
+}
+
 const entryMetaMap = {
   '购票 / 预约': { icon: '🎟️', kicker: '本周热卖', toneClass: 'tone-sun' },
   '卡种中心': { icon: '💳', kicker: '省心入园', toneClass: 'tone-rose' },
@@ -25,6 +32,7 @@ function mapEntry(label) {
   return {
     label,
     path: entryPathMap[label] || '/pages/index/index',
+    testKey: entryTestKeyMap[label] || 'entry',
     desc: describeEntry(label),
     icon: meta.icon,
     kicker: meta.kicker,

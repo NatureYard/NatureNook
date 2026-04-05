@@ -99,6 +99,12 @@ function buildProfileResponse(state) {
     memberName: state.memberName,
     memberLevel: state.memberLevel,
     storeName: state.storeName,
+    items: [
+      `会员等级：${state.memberLevel}`,
+      '活跃卡种：1',
+      `累计订单：${state.orders.length}`,
+      '人脸录入状态：已录入',
+    ],
   }
 }
 
@@ -108,6 +114,14 @@ function buildContextResponse(state) {
     storeName: state.storeName,
     pets: clone(state.pets),
   }
+}
+
+function buildCardsResponse() {
+  return [
+    { id: 1, name: '月卡', desc: '30 天内多次入园', status: '可购买', validTo: '2026-05-31', price: '399' },
+    { id: 2, name: '季卡', desc: '90 天内多次入园', status: '可购买', validTo: '2026-08-31', price: '999' },
+    { id: 3, name: '年卡', desc: '365 天内多次入园', status: '可购买', validTo: '2027-04-06', price: '1288' },
+  ]
 }
 
 function isE2EMockEnabled() {
@@ -141,6 +155,10 @@ function resolveE2EMockRequest(path, options = {}) {
 
   if (path === '/api/c-app/context' && method === 'GET') {
     return buildContextResponse(state)
+  }
+
+  if (path === '/api/c-app/cards' && method === 'GET') {
+    return buildCardsResponse()
   }
 
   if (path === '/api/c-app/reservations' && method === 'POST') {

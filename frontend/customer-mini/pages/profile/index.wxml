@@ -5,7 +5,7 @@
       <view class="level-pill">{{memberLevelText}}</view>
     </view>
     <view class="page-hero-copy">
-      <view class="page-hero-title">{{memberName}}</view>
+      <view id="profile-member-name" class="page-hero-title">{{memberName}}</view>
       <view class="page-hero-text">归属门店：{{storeName}}</view>
     </view>
     <view class="page-status-panel">
@@ -14,7 +14,7 @@
     </view>
   </view>
 
-  <view class="section-title">会员概览</view>
+  <view id="profile-page-title" class="section-title">会员概览</view>
   <view wx:for="{{items}}" wx:key="title" class="card-shell profile-card">
     <view class="item-title">{{item.title}}</view>
     <view class="item-value">{{item.value}}</view>

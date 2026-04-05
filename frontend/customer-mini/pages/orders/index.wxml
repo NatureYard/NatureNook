@@ -71,7 +71,7 @@
     <view wx:else class="page-empty empty-state card-shell warm">
       <view class="page-empty-title">还没有激活中的入园凭证</view>
       <view class="page-empty-copy">去预约一场和毛孩子的乐园时光，凭证会在支付后自动出现。</view>
-      <button class="page-primary-action" bindtap="openTickets">去预约</button>
+      <button id="orders-open-tickets" class="page-primary-action" bindtap="openTickets">去预约</button>
     </view>
 
     <view class="section-head secondary">

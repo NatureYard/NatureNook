@@ -4,7 +4,7 @@
     <view class="hero-orb hero-orb-right"></view>
     <view class="page-hero-top">
       <view class="hero-badge">春日出游季</view>
-      <view class="hero-action ghost-button" bindtap="openProfile">会员中心</view>
+      <view id="home-open-profile" class="hero-action ghost-button" bindtap="openProfile">会员中心</view>
     </view>
 
     <view class="page-hero-copy">
@@ -73,6 +73,7 @@
       <view
         wx:for="{{quickEntries}}"
         wx:key="label"
+        id="home-entry-{{item.testKey}}"
         class="module-item {{item.toneClass}}"
         data-path="{{item.path}}"
         bindtap="openEntry"

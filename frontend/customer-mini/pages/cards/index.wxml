@@ -4,7 +4,7 @@
       <view class="status-pill soft">Membership Studio</view>
     </view>
     <view class="page-hero-copy">
-      <view class="page-hero-title">卡种中心</view>
+      <view id="cards-page-title" class="page-hero-title">卡种中心</view>
       <view class="page-hero-text">{{summary}}</view>
     </view>
     <view class="page-status-panel">
@@ -19,15 +19,15 @@
   </view>
 
   <block wx:elif="{{cards.length}}">
-    <view wx:for="{{cards}}" wx:key="id" class="card-shell membership-card {{item.tone}}">
+    <view wx:for="{{cards}}" wx:key="id" id="membership-card-{{index}}" class="card-shell membership-card {{item.tone}}">
       <view class="card-top">
         <view>
-          <view class="badge">{{item.badge}}</view>
-          <view class="name">{{item.name}}</view>
+          <view id="membership-card-badge-{{index}}" class="badge">{{item.badge}}</view>
+          <view id="membership-card-name-{{index}}" class="name">{{item.name}}</view>
         </view>
         <view class="price-block">
           <view class="price-label">参考价格</view>
-          <view class="price">{{item.priceText}}</view>
+          <view id="membership-card-price-{{index}}" class="price">{{item.priceText}}</view>
         </view>
       </view>
       <view class="desc">{{item.desc}}</view>
