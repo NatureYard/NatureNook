@@ -1,13 +1,15 @@
 package com.mcly.customer.web;
 
 import com.mcly.common.api.ApiResponse;
-import com.mcly.common.api.IdResponse;
-import com.mcly.customer.api.CreateCustomerReservationRequest;
 import com.mcly.customer.api.CustomerCardResponse;
+import com.mcly.customer.api.CustomerContextResponse;
+import com.mcly.customer.api.CreateCustomerReservationRequest;
+import com.mcly.customer.api.CreateCustomerReservationResponse;
 import com.mcly.customer.api.CustomerHomeResponse;
 import com.mcly.customer.api.CustomerOrderResponse;
 import com.mcly.customer.api.CustomerPetResponse;
-import com.mcly.customer.api.CustomerReservationResponse;
+import com.mcly.customer.api.CustomerProfileResponse;
+import com.mcly.customer.api.CustomerTicketResponse;
 import com.mcly.customer.service.CustomerMiniService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -37,25 +39,35 @@ public class CustomerMiniController {
         return ApiResponse.ok(customerMiniService.orders());
     }
 
-    @GetMapping("/cards")
-    public ApiResponse<List<CustomerCardResponse>> cards() {
-        return ApiResponse.ok(customerMiniService.listCards());
+    @GetMapping("/context")
+    public ApiResponse<CustomerContextResponse> context() {
+        return ApiResponse.ok(customerMiniService.context());
     }
 
     @GetMapping("/pets")
     public ApiResponse<List<CustomerPetResponse>> pets() {
-        return ApiResponse.ok(customerMiniService.listPets());
+        return ApiResponse.ok(customerMiniService.pets());
     }
 
-    @GetMapping("/reservations")
-    public ApiResponse<List<CustomerReservationResponse>> reservations() {
-        return ApiResponse.ok(customerMiniService.listReservations());
+    @GetMapping("/cards")
+    public ApiResponse<List<CustomerCardResponse>> cards() {
+        return ApiResponse.ok(customerMiniService.cards());
+    }
+
+    @GetMapping("/profile")
+    public ApiResponse<CustomerProfileResponse> profile() {
+        return ApiResponse.ok(customerMiniService.profile());
+    }
+
+    @GetMapping("/tickets")
+    public ApiResponse<List<CustomerTicketResponse>> tickets() {
+        return ApiResponse.ok(customerMiniService.tickets());
     }
 
     @PostMapping("/reservations")
-    public ApiResponse<IdResponse> createReservation(@Valid @RequestBody CreateCustomerReservationRequest request) {
-        return ApiResponse.ok(new IdResponse(customerMiniService.createReservation(request)));
+    public ApiResponse<CreateCustomerReservationResponse> createReservation(
+            @Valid @RequestBody CreateCustomerReservationRequest request
+    ) {
+        return ApiResponse.ok(customerMiniService.createReservation(request));
     }
 }
-
-

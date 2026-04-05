@@ -1,7 +1,18 @@
 <view class="page">
-  <view wx:for="{{pets}}" wx:key="name" class="card">
-    <view class="name">{{item.name}}</view>
-    <view class="desc">{{item.meta}}</view>
-  </view>
-</view>
+  <view class="page-title">我的宠物</view>
+  <view class="page-subtitle">查看宠物档案、品种和体重信息</view>
 
+  <view wx:if="{{loading}}" class="empty-card">正在加载宠物档案...</view>
+
+  <block wx:elif="{{pets.length}}">
+    <view wx:for="{{pets}}" wx:key="id" class="card">
+      <view class="pet-avatar">{{item.avatar}}</view>
+      <view class="pet-content">
+        <view class="name">{{item.name}}</view>
+        <view class="desc">{{item.meta}}</view>
+      </view>
+    </view>
+  </block>
+
+  <view wx:else class="empty-card">暂无宠物档案</view>
+</view>

@@ -5,7 +5,9 @@ public record CustomerOrderResponse(
         String orderNo,
         String type,
         String status,
-        String amount
+        String amount,
+        String storeName,
+        String reservationDate,
+        String timeSlot
 ) {
 }
-

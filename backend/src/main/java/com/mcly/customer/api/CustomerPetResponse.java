@@ -6,6 +6,6 @@ public record CustomerPetResponse(
         String species,
         String breed,
         String gender,
-        String ownerName
+        String weight
 ) {
 }
