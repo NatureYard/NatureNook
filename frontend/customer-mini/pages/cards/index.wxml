@@ -1,6 +1,6 @@
 <view class="page">
   <view class="page-header">
-    <view class="page-title">卡种中心</view>
+    <view id="cards-page-title" class="page-title">卡种中心</view>
     <view class="page-subtitle">查看会员卡权益与有效期</view>
   </view>
 
@@ -18,16 +18,16 @@
 
   <!-- 卡种列表 -->
   <block wx:elif="{{cards.length}}">
-    <view wx:for="{{cards}}" wx:key="id" class="card-item fade-in">
+    <view wx:for="{{cards}}" wx:key="id" id="membership-card-{{index}}" class="card-item fade-in">
       <!-- 卡头 -->
       <view class="card-hero {{item.statusClass}}">
         <view class="card-hero-top">
-          <view class="card-name">{{item.name}}</view>
-          <view class="card-status">{{item.status}}</view>
+          <view id="membership-card-name-{{index}}" class="card-name">{{item.name}}</view>
+          <view id="membership-card-status-{{index}}" class="card-status">{{item.status}}</view>
         </view>
         <view class="card-price-row">
           <text class="card-price-unit">¥</text>
-          <text class="card-price-value">{{item.price}}</text>
+          <text id="membership-card-price-{{index}}" class="card-price-value">{{item.price}}</text>
         </view>
       </view>
 

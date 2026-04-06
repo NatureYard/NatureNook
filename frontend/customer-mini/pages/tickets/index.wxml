@@ -40,45 +40,46 @@
   <!-- Step 1: 选服务 -->
   <block wx:elif="{{step === 1}}">
     <view class="page-header fade-in">
-      <view class="page-title">选择服务</view>
+      <view id="tickets-page-title" class="page-title">选择服务</view>
       <view class="page-subtitle">请选择您想预约的服务项目</view>
     </view>
 
     <view
       wx:for="{{products}}"
       wx:key="code"
+      id="select-product-{{item.code}}"
       class="product-card {{selectedIndex === index ? 'selected' : ''}} fade-in"
       data-index="{{index}}"
       bindtap="selectProduct"
     >
       <view class="product-top">
-        <view class="product-name">{{item.name}}</view>
+        <view id="product-name-{{item.code}}" class="product-name">{{item.name}}</view>
         <view wx:if="{{item.tags[0]}}" class="product-tag">{{item.tags[0]}}</view>
       </view>
       <view class="product-desc">{{item.desc}}</view>
       <view class="product-bottom">
-        <view class="product-price">
+        <view id="product-price-{{item.code}}" class="product-price">
           <text class="price-unit">¥</text>{{item.price}}
         </view>
-        <view class="product-check {{selectedIndex === index ? 'checked' : ''}}">
+        <view id="product-check-{{item.code}}" class="product-check {{selectedIndex === index ? 'checked' : ''}}">
           {{selectedIndex === index ? '已选' : '选择'}}
         </view>
       </view>
     </view>
 
     <view class="bottom-bar">
-      <view class="bottom-info">
+      <view id="selected-product-name" class="bottom-info">
         <text wx:if="{{selectedProductName}}">已选：{{selectedProductName}}</text>
         <text wx:else class="muted">请选择服务项目</text>
       </view>
-      <button class="bottom-btn" disabled="{{!selectedProductCode}}" bindtap="nextStep">下一步</button>
+      <button id="tickets-next-step-1" class="bottom-btn" disabled="{{!selectedProductCode}}" bindtap="nextStep">下一步</button>
     </view>
   </block>
 
   <!-- Step 2: 填信息 -->
   <block wx:elif="{{step === 2}}">
     <view class="page-header fade-in">
-      <view class="page-title">预约信息</view>
+      <view id="tickets-page-title" class="page-title">预约信息</view>
       <view class="page-subtitle">{{selectedProductName}} · ¥{{selectedProductPrice}}</view>
     </view>
 
@@ -131,6 +132,7 @@
           <view
             wx:for="{{timeSlots}}"
             wx:key="*this"
+            id="ticket-slot-{{index}}"
             class="slot-tag {{selectedTimeSlot === item ? 'active' : ''}}"
             data-slot="{{item}}"
             bindtap="selectTimeSlot"
@@ -141,21 +143,21 @@
 
     <view class="bottom-bar">
       <button class="bottom-btn-ghost" bindtap="prevStep">上一步</button>
-      <button class="bottom-btn" disabled="{{!pets.length || !selectedTimeSlot}}" bindtap="goToConfirm">下一步</button>
+      <button id="tickets-next-step-2" class="bottom-btn" disabled="{{!pets.length || !selectedTimeSlot}}" bindtap="goToConfirm">下一步</button>
     </view>
   </block>
 
   <!-- Step 3: 确认提交 -->
   <block wx:elif="{{step === 3}}">
     <view class="page-header fade-in">
-      <view class="page-title">确认预约</view>
+      <view id="tickets-page-title" class="page-title">确认预约</view>
       <view class="page-subtitle">请确认以下预约信息</view>
     </view>
 
-    <view class="confirm-card fade-in">
+    <view id="tickets-confirm-card" class="confirm-card fade-in">
       <view class="confirm-row">
         <view class="confirm-label">服务项目</view>
-        <view class="confirm-value">{{selectedProductName}}</view>
+        <view id="tickets-confirm-product-name" class="confirm-value">{{selectedProductName}}</view>
       </view>
       <view class="confirm-row">
         <view class="confirm-label">服务说明</view>
@@ -187,7 +189,7 @@
 
     <view class="bottom-bar">
       <button class="bottom-btn-ghost" bindtap="prevStep">上一步</button>
-      <button class="bottom-btn submit" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting}}">
+      <button id="tickets-submit" class="bottom-btn submit" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting}}">
         确认并提交
       </button>
     </view>

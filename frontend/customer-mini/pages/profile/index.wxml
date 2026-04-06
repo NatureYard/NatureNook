@@ -15,10 +15,10 @@
 
   <block wx:else>
     <!-- 会员 Hero -->
-    <view class="hero fade-in">
+    <view id="profile-page-root" class="hero fade-in">
       <view class="hero-avatar">{{avatar}}</view>
       <view class="hero-info">
-        <view class="hero-name">{{memberName}}</view>
+        <view id="profile-member-name" class="hero-name">{{memberName}}</view>
         <view class="hero-level">{{memberLevel}}</view>
       </view>
       <view class="hero-store">{{storeName}}</view>

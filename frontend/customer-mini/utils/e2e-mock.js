@@ -18,7 +18,7 @@ function createInitialState() {
     memberLevel: 'SILVER',
     storeName: '上海萌宠乐园旗舰店',
     banners: ['周末寄养优惠', '年卡限时折扣', '洗护套餐立减'],
-    quickEntries: ['购票 / 预约', '卡种中心', '我的宠物', '入园凭证'],
+    quickEntries: ['购票预约', '卡种中心', '我的宠物', '入园凭证'],
     activeCardTip: '年卡会员可在有效期内多次入园，现场只需亮出凭证即可快速核验。',
     pets: [
       { id: 1, name: '奶球' },

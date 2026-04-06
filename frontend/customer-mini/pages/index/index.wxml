@@ -21,14 +21,14 @@
     <view class="hero fade-in">
       <view class="hero-top">
         <view class="hero-info">
-          <view class="hero-name">{{memberName}}</view>
+          <view id="home-member-name" class="hero-name">{{memberName}}</view>
           <view class="hero-meta">{{memberLevel}} · {{storeName}}</view>
         </view>
-        <view class="hero-action" bindtap="openProfile">个人中心</view>
+        <view id="home-open-profile" class="hero-action" bindtap="openProfile">个人中心</view>
       </view>
 
       <view class="hero-stats">
-        <view class="hero-stat" bindtap="openOrders">
+        <view id="home-open-orders" class="hero-stat" bindtap="openOrders">
           <view class="hero-stat-value">{{orderCount}}</view>
           <view class="hero-stat-label">我的订单</view>
         </view>
@@ -36,7 +36,7 @@
           <view class="hero-stat-value">{{petCount}}</view>
           <view class="hero-stat-label">宠物档案</view>
         </view>
-        <view class="hero-stat" bindtap="openCards">
+        <view id="home-open-cards" class="hero-stat" bindtap="openCards">
           <view class="hero-stat-value">{{cardCount}}</view>
           <view class="hero-stat-label">活跃卡种</view>
         </view>
@@ -106,7 +106,7 @@
     </view>
 
     <!-- 快速预约入口 -->
-    <view class="fab fade-in" bindtap="openTickets">
+    <view id="home-open-tickets" class="fab fade-in" bindtap="openTickets">
       <view class="fab-text">预约</view>
     </view>
   </block>
