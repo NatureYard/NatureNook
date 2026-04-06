@@ -13,16 +13,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 docker compose up -d postgres
 
 # 启动后端（Java 17，端口 8080）
-cd backend && gradle bootRun
+cd backend && ./gradlew bootRun
 
 # 启动管理后台（端口由 Vite 决定，通常 5173）
 cd frontend/admin-web && npm install && npm run dev
 
 # 运行后端所有测试
-cd backend && gradle test
+cd backend && ./gradlew test
 
 # 运行单个测试类
-cd backend && gradle test --tests "com.mcly.customer.web.CustomerMiniControllerTests"
+cd backend && ./gradlew test --tests "com.mcly.customer.web.CustomerMiniControllerTests"
 ```
 
 消费者小程序（`frontend/customer-mini`）用微信开发者工具打开；商户移动端（`frontend/merchant-mobile`）当前仍是骨架，尚未配置构建工具。
@@ -35,19 +35,24 @@ Spring Boot 3.3.2 · Java 17 · PostgreSQL 16 · Flyway · Spring Data JPA + JDB
 
 ### 包结构（`com.mcly`）
 
-每个业务域下均为 `web / service / repository / api` 四层：
+每个业务域下均为 `web / service / repository / api` 四层，Repository 层采用 Command/Query 分离：`*CommandRepository` 负责写操作（原生 JDBC），`*QueryRepository` 负责读操作，JPA Repository 用于简单 CRUD。
 
 | 包 | 职责 |
 |---|---|
 | `common` | `ApiResponse<T>`、`GlobalExceptionHandler`、`QuerySupport`（JDBC 查询帮助类） |
+| `common.auth` | 小程序认证：`MiniAppAuthInterceptor`（拦截器）、`TokenStore`（令牌存储）、`AuthContext`（上下文） |
 | `member` | 会员档案、宠物档案 |
 | `order` | 预约（`Reservation`）、卡种（`MembershipCard`） |
 | `customer` | 消费者小程序聚合接口（`/api/c-app/`） |
-| `merchant` | 商户移动端接口（`/api/m-app/`），含人工放行 |
-| `gate` | 闸机通行校验与事件上报（`/api/device/gate/`） |
-| `material` | 物资领用、库存查询 |
+| `merchant` | 商户移动端接口（`/api/m-app/`），含人工放行、核销 |
+| `device` | 闸机设备通信：核验、心跳、事件上报（`/api/device/gate/`） |
+| `gate` | 闸机通行规则与事件查询 |
+| `boarding` | 宠物寄养订单、每日记录 |
+| `grooming` | 宠物美容订单 |
+| `material` | 物资领用、报损、库存查询 |
+| `pass` | 通行资格枚举（`PassType`）与资格写入 |
+| `risk` | 风控事件记录与查询 |
 | `dashboard` | 管理后台汇总看板 |
-| `pass` | 通行资格枚举（`PassType`） |
 
 ### API 前缀约定
 
@@ -58,13 +63,13 @@ Spring Boot 3.3.2 · Java 17 · PostgreSQL 16 · Flyway · Spring Data JPA + JDB
 
 ### 数据库
 
-- Flyway 管理迁移，文件位于 `backend/src/main/resources/db/migration/`（V1 ~ V4）
+- Flyway 管理迁移，文件位于 `backend/src/main/resources/db/migration/`（V1 ~ V9）
 - `schema.sql` / `seed.sql` 供 docker-compose 初次初始化用，**与 Flyway migration 内容保持同步**
 - 金额字段用 `numeric(12,2)`，扩展字段用 `jsonb`，业务主表标配 `created_at/by/updated_at/by`
 
 ### 测试
 
-测试使用 H2（PostgreSQL 兼容模式），Flyway 关闭，由 `schema-test.sql` + `data-test.sql` 初始化（位于 `backend/src/test/resources/`）。新增业务表时需同步维护这两个文件。
+测试使用 H2（PostgreSQL 兼容模式），Flyway 关闭，由 `schema-test.sql` + `data-test.sql` 初始化（位于 `backend/src/test/resources/`）。新增业务表时需同步维护这两个文件。测试类命名用 `*Tests`，测试方法用 `should...` 风格。
 
 ## 前端架构
 
@@ -79,6 +84,13 @@ Vue 3 + Vite，当前为占位页骨架。
 ### 商户移动端（`frontend/merchant-mobile`）
 
 uni-app 方案，当前骨架，`pages.json` 配置页面路由。
+
+## 代码风格
+
+- Java / Gradle：4 空格缩进
+- Vue / JavaScript / WXML / WXSS：2 空格缩进
+- 类名 `PascalCase`，方法和字段 `camelCase`，DTO 后缀清晰（`*Request`、`*Response`）
+- 提交信息用 Conventional Commits（`feat:`、`fix:`、`chore:` 等），标题祈使句
 
 ## 关键业务约束
 
