@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "消费者首页"
+  "navigationBarTitleText": "萌宠乐园",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }
-

@@ -1,284 +1,281 @@
 .page {
-  padding-top: 28rpx;
-  padding-left: 28rpx;
-  padding-right: 28rpx;
+  padding: 24rpx 24rpx 120rpx;
 }
 
-.hero-shell {
-  background: linear-gradient(135deg, #ff8f6b 0%, #ffb36b 46%, #ffe3ae 100%);
-  color: #5f3b29;
-  box-shadow: 0 28rpx 70rpx rgba(255, 143, 107, 0.28);
+/* ── 骨架 ── */
+
+.skeleton-wrap {
+  padding: 8rpx 0;
 }
 
-.hero-orb {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.32;
-  pointer-events: none;
+/* ── Hero 卡片 ── */
+
+.hero {
+  padding: 36rpx 32rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #0f766e, #14b8a6 55%, #99f6e4);
+  color: #ffffff;
+  box-shadow: 0 24rpx 60rpx rgba(15, 118, 110, 0.18);
 }
 
-.hero-orb-left {
-  top: -36rpx;
-  left: -40rpx;
-  width: 180rpx;
-  height: 180rpx;
-  background: #ffd86f;
-}
-
-.hero-orb-right {
-  right: -20rpx;
-  bottom: 32rpx;
-  width: 140rpx;
-  height: 140rpx;
-  background: #7ae1c1;
-}
-
-.section-head {
-  align-items: center;
-}
-
-.hero-badge {
-  padding: 10rpx 18rpx;
-  border-radius: 999rpx;
-  background: rgba(255, 248, 241, 0.74);
-  color: #ba643e;
-  font-size: 26rpx;
-  font-weight: 700;
-}
-
-.ghost-button,
-.section-link {
-  padding: 12rpx 20rpx;
-  border-radius: 999rpx;
-  font-size: 26rpx;
-}
-
-.ghost-button {
-  background: rgba(255, 248, 241, 0.74);
-  color: #8f563a;
-}
-
-.section-link {
-  background: rgba(255, 139, 93, 0.12);
-  color: #b26745;
-}
-
-.hero-kicker,
-.section-kicker {
-  font-size: 26rpx;
-  letter-spacing: 2rpx;
-  text-transform: uppercase;
-}
-
-.hero-kicker {
-  color: rgba(95, 59, 41, 0.86);
-}
-
-.hero-action-row {
+.hero-top {
   display: flex;
-  gap: 16rpx;
-  margin-top: 28rpx;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
-.primary-button,
-.secondary-button {
-  flex: 1;
-  padding: 22rpx 0;
-  border-radius: 999rpx;
-  text-align: center;
-  font-size: 30rpx;
+.hero-name {
+  font-size: 40rpx;
   font-weight: 700;
 }
 
-.primary-button {
-  background: #ffffff;
-  color: #f15f3b;
+.hero-meta {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.secondary-button {
-  background: rgba(255, 248, 241, 0.72);
-  color: #8f563a;
+.hero-action {
+  flex-shrink: 0;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 24rpx;
+  backdrop-filter: blur(8rpx);
 }
 
-.hero-status-row {
-  background: rgba(255, 248, 241, 0.58);
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14rpx;
+  margin-top: 24rpx;
 }
 
-.hero-status-pill {
-  background: rgba(255, 139, 93, 0.14);
-  color: #b0613f;
+.hero-stat {
+  padding: 18rpx 16rpx;
+  border-radius: 20rpx;
+  background: rgba(7, 89, 83, 0.24);
+  text-align: center;
 }
 
-.hero-status-copy {
-  color: rgba(95, 59, 41, 0.84);
-}
-
-.loading-panel {
-  margin-top: 22rpx;
-  padding: 28rpx;
-}
-
-.loading-title {
-  margin-top: 16rpx;
+.hero-stat-value {
   font-size: 36rpx;
   font-weight: 700;
-  color: #2e2a26;
 }
+
+.hero-stat-label {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── 今日入园提示 ── */
+
+.today-pass {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+  padding: 22rpx 28rpx;
+  border-radius: 20rpx;
+  background: #ecfdf5;
+  border-left: 6rpx solid #0f766e;
+}
+
+.today-pass-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #0f766e;
+  margin-right: 16rpx;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.today-pass-text {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #065f46;
+}
+
+.today-pass-arrow {
+  font-size: 24rpx;
+  color: #0f766e;
+  font-weight: 600;
+}
+
+/* ── Section ── */
 
 .section {
   margin-top: 28rpx;
 }
 
-.section-tight {
-  margin-top: 22rpx;
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
 }
 
 .section-title {
-  margin-top: 8rpx;
-  color: #2e2a26;
-}
-
-.section-copy {
-  max-width: 480rpx;
-}
-
-.banner-item {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0f172a;
   margin-bottom: 16rpx;
-  padding: 28rpx 26rpx;
-  border-radius: 28rpx;
-  box-shadow: 0 18rpx 50rpx rgba(53, 40, 31, 0.08);
+}
+
+.section-head .section-title {
+  margin-bottom: 0;
+}
+
+/* ── Swiper 轮播 ── */
+
+.banner-swiper {
+  height: 200rpx;
+  border-radius: 24rpx;
+}
+
+.banner-card {
+  height: 100%;
+  padding: 28rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+  box-sizing: border-box;
 }
 
 .banner-tag {
   display: inline-block;
-  padding: 8rpx 16rpx;
+  padding: 4rpx 14rpx;
   border-radius: 999rpx;
-  font-size: 24rpx;
-  font-weight: 700;
-}
-
-.banner-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.banner-arrow {
-  font-size: 34rpx;
-  opacity: 0.5;
-}
-
-.banner-sun {
-  background: linear-gradient(135deg, #fff3dc 0%, #fffaf0 100%);
-}
-
-.banner-sun .banner-tag,
-.banner-sun .banner-arrow {
-  color: #d97706;
-  background: rgba(217, 119, 6, 0.12);
-}
-
-.banner-mint {
-  background: linear-gradient(135deg, #ecfff7 0%, #f8fffc 100%);
-}
-
-.banner-mint .banner-tag,
-.banner-mint .banner-arrow {
-  color: #0f9f7f;
-  background: rgba(15, 159, 127, 0.12);
-}
-
-.banner-rose {
-  background: linear-gradient(135deg, #fff1ec 0%, #fff8f5 100%);
-}
-
-.banner-rose .banner-tag,
-.banner-rose .banner-arrow {
-  color: #ef5b73;
-  background: rgba(239, 91, 115, 0.12);
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: 600;
 }
 
 .banner-title {
-  margin-top: 16rpx;
-  font-size: 34rpx;
+  margin-top: 14rpx;
+  font-size: 32rpx;
   font-weight: 700;
-  color: #2e2a26;
+  color: #0f172a;
 }
 
-.banner-desc {
-  margin-top: 10rpx;
-  font-size: 26rpx;
-  color: #7f7467;
-  line-height: 1.6;
+.banner-subtitle {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #64748b;
 }
+
+.swiper-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10rpx;
+  margin-top: 14rpx;
+}
+
+.swiper-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.3s;
+}
+
+.swiper-dot.active {
+  width: 28rpx;
+  border-radius: 6rpx;
+  background: #0f766e;
+}
+
+/* ── 快捷入口 ── */
 
 .quick-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16rpx;
+  gap: 14rpx;
 }
 
-.module-item {
-  min-height: 228rpx;
+.entry-item {
   padding: 24rpx;
-  border-radius: 30rpx;
-  box-shadow: 0 18rpx 52rpx rgba(53, 40, 31, 0.08);
+  border-radius: 24rpx;
+  background: #ffffff;
+  box-shadow: 0 14rpx 40rpx rgba(15, 23, 42, 0.04);
 }
 
-.module-kicker {
-  font-size: 24rpx;
-  color: #9a8d7f;
+.entry-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  margin-bottom: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.module-icon {
-  margin-top: 16rpx;
-  font-size: 42rpx;
-}
+.entry-icon--ticket { background: #dbeafe; }
+.entry-icon--card { background: #fce7f3; }
+.entry-icon--paw { background: #fef3c7; }
+.entry-icon--pass { background: #d1fae5; }
+.entry-icon--dot { background: #e5e7eb; }
 
-.module-title {
-  margin-top: 20rpx;
-  font-size: 34rpx;
+.entry-label {
+  font-size: 30rpx;
   font-weight: 700;
-  color: #2e2a26;
+  color: #0f172a;
 }
 
-.module-desc {
-  margin-top: 12rpx;
-  color: #7f7467;
-  font-size: 26rpx;
-  line-height: 1.5;
+.entry-desc {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #94a3b8;
 }
 
-.module-link {
-  margin-top: 18rpx;
-  color: #f15f3b;
-  font-size: 26rpx;
-  font-weight: 700;
-}
+/* ── 提示卡片 ── */
 
 .tip-card {
   margin-top: 24rpx;
-  padding: 28rpx;
-  border-radius: 28rpx;
-  background: linear-gradient(135deg, #2f8f7d 0%, #61c5a4 100%);
-  color: #ffffff;
-  box-shadow: 0 20rpx 54rpx rgba(47, 143, 125, 0.18);
+  padding: 22rpx 24rpx;
+  border-radius: 20rpx;
+  background: #f0fdfa;
+  border: 1rpx solid #ccfbf1;
 }
 
 .tip-label {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.78);
+  font-size: 22rpx;
+  color: #0f766e;
+  font-weight: 600;
+  margin-bottom: 8rpx;
 }
 
-.tip-title {
-  margin-top: 12rpx;
-  font-size: 38rpx;
+.tip-text {
+  font-size: 26rpx;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* ── 浮动预约按钮 ── */
+
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: calc(env(safe-area-inset-bottom) + 180rpx);
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16rpx 40rpx rgba(15, 118, 110, 0.35);
+  z-index: 10;
+}
+
+.fab-text {
+  font-size: 26rpx;
   font-weight: 700;
-}
-
-.tip-desc {
-  margin-top: 12rpx;
-  font-size: 26rpx;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.92);
 }

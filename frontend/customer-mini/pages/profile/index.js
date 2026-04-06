@@ -1,58 +1,80 @@
-const { request } = require('../../utils/request')
-
-function levelLabel(level) {
-  if (!level) return '会员旅程待完善'
-  if (level === 'SILVER') return '银卡会员'
-  if (level === 'GOLD') return '金卡会员'
-  if (level === 'PLATINUM') return '铂金会员'
-  return level
-}
-
-function mapProfileItem(item) {
-  const parts = String(item || '').split('：')
-  if (parts.length >= 2) {
-    return {
-      title: parts[0],
-      value: parts.slice(1).join('：'),
-    }
-  }
-  return {
-    title: '会员信息',
-    value: item,
-  }
-}
+var api = require('../../utils/api')
+var fmt = require('../../utils/formatters')
 
 Page({
   data: {
+    loading: true,
+    error: '',
+    avatar: '',
     memberName: '当前会员',
     memberLevel: '',
-    memberLevelText: '',
     storeName: '',
-    items: [],
-    profileHint: '会员等级、订单与凭证状态会在这里统一查看。',
+    phone: '',
+    faceStatus: '',
+    petCount: 0,
+    cardCount: 0,
+    orderCount: 0,
   },
 
-  onLoad() {
-    request('/api/c-app/profile')
-      .then((data) => {
-        this.setData({
-          memberName: data.memberName,
-          memberLevel: data.memberLevel,
-          memberLevelText: levelLabel(data.memberLevel),
-          storeName: data.storeName,
-          items: data.items.map(mapProfileItem),
-          profileHint: data.items.length ? '你的会员信息已同步，关键状态会以可读字段持续更新。' : '会员信息正在同步中。',
+  onShow: function () {
+    this.loadProfile()
+  },
+
+  onPullDownRefresh: function () {
+    this.loadProfile()
+  },
+
+  loadProfile: function () {
+    this.setData({ loading: true, error: '' })
+    var self = this
+
+    Promise.all([api.fetchProfile(), api.fetchContext(), api.fetchOrders()])
+      .then(function (results) {
+        var profile = results[0] || {}
+        var context = results[1] || {}
+        var orders = results[2] || []
+
+        self.setData({
+          loading: false,
+          avatar: profile.memberName ? profile.memberName.substring(0, 1) : '?',
+          memberName: profile.memberName || '当前会员',
+          memberLevel: fmt.formatMemberLevel(profile.memberLevel),
+          storeName: profile.storeName || '未分配门店',
+          phone: profile.phone || '未绑定',
+          faceStatus: profile.faceStatus === 'REGISTERED' ? '已录入' : '未录入',
+          petCount: (context.pets || []).length,
+          cardCount: (context.cards || []).length,
+          orderCount: orders.length,
         })
       })
-      .catch(() => {
-        this.setData({
-          memberName: '张三',
-          memberLevel: 'SILVER',
-          memberLevelText: levelLabel('SILVER'),
-          storeName: '上海萌宠乐园旗舰店',
-          items: ['会员等级：SILVER', '活跃卡种：0', '累计订单：1', '人脸录入状态：已录入'].map(mapProfileItem),
-          profileHint: '你的会员信息已同步，关键状态会以可读字段持续更新。',
+      .catch(function (error) {
+        self.setData({
+          loading: false,
+          error: error.message || '会员信息加载失败，请稍后重试',
         })
       })
+      .then(function () {
+        wx.stopPullDownRefresh()
+      })
+  },
+
+  retry: function () {
+    this.loadProfile()
+  },
+
+  openOrders: function () {
+    wx.switchTab({ url: '/pages/orders/index' })
+  },
+
+  openCards: function () {
+    wx.navigateTo({ url: '/pages/cards/index' })
+  },
+
+  openPets: function () {
+    wx.navigateTo({ url: '/pages/pets/index' })
+  },
+
+  openTickets: function () {
+    wx.switchTab({ url: '/pages/tickets/index' })
   },
 })

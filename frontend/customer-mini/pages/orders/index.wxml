@@ -1,115 +1,78 @@
-<view class="page orders-page page-stack">
-  <view class="orders-hero card-shell page-hero mint">
-    <view class="page-hero-top">
-      <view class="status-pill mint">Journey Pass</view>
-      <view class="section-pill">订单履约</view>
-    </view>
-    <view class="page-hero-copy">
-      <view id="orders-page-title" class="page-hero-title">订单与入园凭证</view>
-      <view class="page-hero-text">把有效凭证、预约状态和支付记录放在同一张旅程面板里。</view>
-    </view>
-    <view class="page-status-panel">
-      <view class="status-pill mint">状态持续同步</view>
-      <view class="page-status-note">{{journeyHint}}</view>
-    </view>
-    <view class="page-metrics">
-      <view class="page-metric">
-        <view class="page-metric-value">{{passes.length}}</view>
-        <view class="page-metric-label">当前凭证</view>
-      </view>
-      <view class="page-metric accent">
-        <view id="orders-count-value" class="page-metric-value">{{orders.length}}</view>
-        <view class="page-metric-label">历史订单</view>
-      </view>
-    </view>
+<view class="page">
+  <view class="page-header">
+    <view class="page-title">我的订单</view>
+    <view class="page-subtitle">查看预约记录与入园凭证</view>
   </view>
 
-  <view wx:if="{{loading}}" class="page-empty empty-state card-shell">
-    <view class="status-pill soft">正在同步</view>
-    <view class="page-empty-title">正在整理你的乐园旅程</view>
-    <view class="page-empty-copy">凭证、订单和预约信息马上就到。</view>
+  <!-- Tab 筛选 -->
+  <view class="tab-bar" wx:if="{{!loading && !error}}">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab-item {{activeTab === item.key ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="switchTab"
+    >{{item.label}}</view>
   </view>
 
-  <block wx:else>
-    <view class="section-head">
-      <view>
-        <view class="section-title">当前有效凭证</view>
-        <view class="section-copy">{{passSummary}}</view>
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:160rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:160rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:160rpx;"></view>
+  </view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">订单加载失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <!-- 订单列表 -->
+  <block wx:elif="{{orders.length}}">
+    <view
+      wx:for="{{orders}}"
+      wx:key="no"
+      class="order-card {{item.isToday ? 'today' : ''}} fade-in"
+    >
+      <!-- 今日标记 -->
+      <view wx:if="{{item.canUse}}" class="order-badge">今日可用</view>
+
+      <view class="order-top">
+        <view class="order-type">{{item.type}}</view>
+        <view class="status-pill {{item.statusClass}}">{{item.status}}</view>
       </view>
-      <view wx:if="{{passes.length}}" class="section-pill">实时可核验</view>
-    </view>
 
-    <block wx:if="{{passes.length}}">
-      <view wx:for="{{passes}}" wx:key="id" class="pass-ticket card-shell">
-        <view class="pass-glow"></view>
-        <view class="ticket-head">
-          <view>
-            <view class="ticket-code">{{item.code}}</view>
-            <view class="ticket-name">{{item.name}}</view>
-          </view>
-          <view class="badge {{item.statusClass}}">{{item.status}}</view>
-        </view>
-        <view class="ticket-tone">{{item.statusTone}}</view>
-        <view class="ticket-divider"></view>
-        <view class="ticket-grid">
-          <view class="ticket-meta">
-            <view class="ticket-label">核验门店</view>
-            <view class="ticket-value">{{item.storeName}}</view>
-          </view>
-          <view class="ticket-meta">
-            <view class="ticket-label">通行规则</view>
-            <view class="ticket-value">{{item.reentryPolicy}}</view>
-          </view>
-          <view class="ticket-meta full">
-            <view class="ticket-label">有效时段</view>
-            <view class="ticket-value">{{item.validWindow}}</view>
-          </view>
-        </view>
+      <view class="order-no">{{item.no}}</view>
+
+      <view class="order-detail-row" wx:if="{{item.reservationInfo}}">
+        <text class="order-detail-label">预约</text>
+        <text class="order-detail-value">
+          <text wx:if="{{item.dateFriendly}}">{{item.dateFriendly}} </text>{{item.reservationInfo}}
+        </text>
       </view>
-    </block>
 
-    <view wx:else class="page-empty empty-state card-shell warm">
-      <view class="page-empty-title">还没有激活中的入园凭证</view>
-      <view class="page-empty-copy">去预约一场和毛孩子的乐园时光，凭证会在支付后自动出现。</view>
-      <button id="orders-open-tickets" class="page-primary-action" bindtap="openTickets">去预约</button>
-    </view>
-
-    <view class="section-head secondary">
-      <view>
-        <view class="section-title">订单记录</view>
-        <view class="section-copy">{{orderSummary}}</view>
+      <view class="order-detail-row">
+        <text class="order-detail-label">门店</text>
+        <text class="order-detail-value">{{item.storeName}}</text>
       </view>
-    </view>
 
-    <block wx:if="{{orders.length}}">
-      <view class="timeline">
-        <view wx:for="{{orders}}" wx:key="no" class="order-item card-shell">
-          <view class="timeline-dot"></view>
-          <view class="order-top">
-            <view>
-              <view class="order-type">{{item.type}}</view>
-              <view class="order-no">{{item.no}}</view>
-            </view>
-            <view class="order-side">
-              <view class="badge {{item.statusClass}}">{{item.status}}</view>
-              <view class="order-tone">{{item.statusTone}}</view>
-            </view>
-          </view>
-          <view class="order-meta-row">
-            <view class="order-chip">{{item.storeName}}</view>
-            <view class="order-chip light">{{item.reservationInfo}}</view>
-          </view>
-          <view class="order-bottom">
-            <view class="order-amount-label">订单金额</view>
-            <view class="order-amount">{{item.amountText}}</view>
-          </view>
-        </view>
+      <view class="order-footer">
+        <view class="order-amount">¥{{item.amount}}</view>
+        <view wx:if="{{item.canUse}}" class="order-pass-btn">入园凭证</view>
       </view>
-    </block>
-
-    <view wx:else class="page-empty empty-state card-shell soft">
-      <view class="page-empty-title">还没有形成订单记录</view>
-      <view class="page-empty-copy">你完成预约后，这里会沉淀每一次入园安排。</view>
     </view>
   </block>
+
+  <!-- 空列表 -->
+  <view wx:else class="empty-card">
+    <view class="state-title">
+      {{activeTab === 'all' ? '还没有订单记录' : '暂无相关订单'}}
+    </view>
+    <view class="state-desc">
+      {{activeTab === 'all' ? '可以先去预约门票、寄养或洗护服务。' : '切换到其他分类查看更多订单。'}}
+    </view>
+    <button wx:if="{{activeTab === 'all'}}" class="ghost-btn" bindtap="openTickets">去预约</button>
+  </view>
 </view>

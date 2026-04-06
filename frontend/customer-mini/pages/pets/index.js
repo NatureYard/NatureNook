@@ -1,58 +1,58 @@
-const { request } = require('../../utils/request')
-
-function speciesLabel(species) {
-  if (species === 'DOG') return '狗狗档案'
-  if (species === 'CAT') return '猫咪档案'
-  return '宠物档案'
-}
-
-function speciesTone(species) {
-  if (species === 'DOG') return 'peach'
-  if (species === 'CAT') return 'mint'
-  return 'cream'
-}
-
-function mapPet(item) {
-  return {
-    id: item.id,
-    name: item.name,
-    avatar: item.name ? item.name.substring(0, 1) : '?',
-    meta: [item.species, item.breed, item.weight ? `${item.weight}kg` : ''].filter(Boolean).join(' | '),
-    speciesLabel: speciesLabel(item.species),
-    tone: speciesTone(item.species),
-  }
-}
+var api = require('../../utils/api')
+var fmt = require('../../utils/formatters')
 
 Page({
   data: {
     pets: [],
     loading: true,
-    summary: '把每一只毛孩子的基本信息放在同一面档案墙上。',
-    archiveHint: '宠物档案会直接复用到预约和到店核验流程里。',
+    error: '',
   },
 
-  onLoad() {
-    request('/api/c-app/pets')
-      .then((data) => {
-        const pets = data.map(mapPet)
-        this.setData({
-          pets,
+  onLoad: function () {
+    this.loadPets()
+  },
+
+  onPullDownRefresh: function () {
+    this.loadPets()
+  },
+
+  loadPets: function () {
+    this.setData({ loading: true, error: '' })
+    var self = this
+
+    api.fetchPets()
+      .then(function (data) {
+        self.setData({
           loading: false,
-          summary: pets.length ? `你已经建立 ${pets.length} 份宠物档案` : '把每一只毛孩子的基本信息放在同一面档案墙上。',
-          archiveHint: pets.length ? '已建档的宠物可直接在预约流程中选择，无需重复填写。' : '先补齐宠物档案，预约时就不需要再重复输入。',
+          pets: (data || []).map(function (item) {
+            return {
+              id: item.id,
+              name: item.name,
+              avatar: item.name ? item.name.substring(0, 1) : '?',
+              species: fmt.formatPetSpecies(item.species),
+              breed: item.breed || '未知品种',
+              gender: fmt.formatPetGender(item.gender),
+              genderClass: item.gender === 'MALE' ? 'male' : 'female',
+              weight: item.weight ? item.weight + 'kg' : '未记录',
+              vaccinated: item.vaccinated,
+              meta: fmt.formatPetMeta(item),
+            }
+          }),
         })
       })
-      .catch(() => {
-        const pets = [
-          { id: 1, name: '奶球', species: 'DOG', breed: '柯基', weight: '8.50' },
-          { id: 2, name: '布丁', species: 'CAT', breed: '英短', weight: '4.20' },
-        ].map(mapPet)
-        this.setData({
-          pets,
+      .catch(function (error) {
+        self.setData({
           loading: false,
-          summary: `你已经建立 ${pets.length} 份宠物档案`,
-          archiveHint: '已建档的宠物可直接在预约流程中选择，无需重复填写。',
+          pets: [],
+          error: error.message || '宠物档案加载失败，请稍后重试',
         })
       })
+      .then(function () {
+        wx.stopPullDownRefresh()
+      })
+  },
+
+  retry: function () {
+    this.loadPets()
   },
 })

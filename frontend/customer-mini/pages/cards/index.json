@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "卡种中心"
+  "navigationBarTitleText": "卡种中心",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }
-

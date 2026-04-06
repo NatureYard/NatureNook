@@ -1,243 +1,129 @@
-.orders-page {
-  padding-top: 24rpx;
-  padding-left: 24rpx;
-  padding-right: 24rpx;
+.page {
+  padding: 24rpx;
 }
 
-.orders-hero {
-  padding: 0;
-}
+/* ── Tab 筛选栏 ── */
 
-.section-head {
-  align-items: center;
-  margin: 34rpx 4rpx 18rpx;
-}
-
-.section-head.secondary {
-  margin-top: 38rpx;
-}
-
-.section-title {
-  color: #2f2a24;
-}
-
-.section-copy {
-  margin-top: 8rpx;
-  color: #8a7a6d;
-}
-
-.section-pill {
-  padding: 12rpx 18rpx;
-  border-radius: 999rpx;
-  background: rgba(255, 131, 96, 0.12);
-  color: #ff7f5f;
-  font-size: 24rpx;
-  font-weight: 600;
-}
-
-.pass-ticket {
-  margin-bottom: 20rpx;
-  padding: 30rpx;
-  background:
-    radial-gradient(circle at top right, rgba(137, 226, 203, 0.34), transparent 28%),
-    linear-gradient(145deg, #ffffff 0%, #f4fffb 50%, #eefaf8 100%);
-  border: 2rpx solid rgba(110, 202, 183, 0.24);
-}
-
-.pass-glow {
-  position: absolute;
-  top: -60rpx;
-  right: -40rpx;
-  width: 220rpx;
-  height: 220rpx;
-  border-radius: 50%;
-  background: rgba(141, 222, 202, 0.22);
-}
-
-.ticket-head {
-  position: relative;
+.tab-bar {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24rpx;
+  gap: 8rpx;
+  margin-bottom: 24rpx;
+  padding: 6rpx;
+  border-radius: 20rpx;
+  background: #f1f5f9;
 }
 
-.ticket-code {
-  font-size: 24rpx;
-  letter-spacing: 3rpx;
-  color: #7db5a7;
-}
-
-.ticket-name {
-  margin-top: 10rpx;
-  font-size: 40rpx;
-  line-height: 1.35;
-  font-weight: 700;
-  color: #20534a;
-}
-
-.ticket-tone {
-  position: relative;
-  margin-top: 14rpx;
+.tab-item {
+  flex: 1;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+  text-align: center;
   font-size: 26rpx;
   font-weight: 600;
-  color: #2b7a6f;
+  color: #64748b;
+  transition: all 0.2s;
 }
 
-.ticket-divider {
+.tab-item.active {
+  background: #ffffff;
+  color: #0f766e;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+/* ── 骨架 ── */
+
+.skeleton-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+/* ── 订单卡片 ── */
+
+.order-card {
   position: relative;
-  margin: 22rpx 0;
-  border-top: 2rpx dashed rgba(73, 149, 132, 0.18);
-}
-
-.ticket-grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18rpx;
-}
-
-.ticket-meta {
-  padding: 20rpx 22rpx;
-  border-radius: 22rpx;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.ticket-meta.full {
-  grid-column: 1 / -1;
-}
-
-.ticket-label,
-.order-amount-label {
-  font-size: 24rpx;
-  color: #87a097;
-}
-
-.ticket-value {
-  margin-top: 8rpx;
-  font-size: 28rpx;
-  line-height: 1.6;
-  color: #365d57;
-}
-
-.timeline {
-  position: relative;
-  padding-left: 28rpx;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  top: 18rpx;
-  bottom: 18rpx;
-  left: 8rpx;
-  width: 4rpx;
-  border-radius: 999rpx;
-  background: linear-gradient(180deg, rgba(255, 122, 89, 0.4), rgba(255, 196, 151, 0.18));
-}
-
-.order-item {
-  margin-bottom: 20rpx;
-  margin-left: 18rpx;
+  margin-bottom: 16rpx;
   padding: 28rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  box-shadow: 0 14rpx 40rpx rgba(15, 23, 42, 0.04);
+  border-left: 6rpx solid transparent;
 }
 
-.timeline-dot {
+.order-card.today {
+  border-left-color: #0f766e;
+  background: #f0fdfa;
+}
+
+.order-badge {
   position: absolute;
-  top: 34rpx;
-  left: -34rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border: 6rpx solid #fff3ea;
-  border-radius: 50%;
-  background: #ff845e;
-  box-shadow: 0 0 0 8rpx rgba(255, 132, 94, 0.14);
+  top: 0;
+  right: 28rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 0 0 12rpx 12rpx;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: 600;
 }
 
-.order-top,
-.order-bottom {
+.order-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20rpx;
 }
 
 .order-type {
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: 700;
+  color: #0f172a;
 }
 
 .order-no {
   margin-top: 8rpx;
   font-size: 24rpx;
+  color: #94a3b8;
+  font-family: monospace;
 }
 
-.order-side {
+.order-detail-row {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10rpx;
-}
-
-.order-tone {
-  font-size: 24rpx;
-}
-
-.order-meta-row {
-  display: flex;
-  flex-wrap: wrap;
+  align-items: baseline;
+  margin-top: 12rpx;
   gap: 12rpx;
-  margin-top: 18rpx;
 }
 
-.order-chip {
-  padding: 12rpx 18rpx;
-  border-radius: 999rpx;
-  background: #fff1e7;
-  color: #b56a49;
+.order-detail-label {
   font-size: 24rpx;
+  color: #94a3b8;
+  flex-shrink: 0;
 }
 
-.order-chip.light {
-  background: #f6f8fb;
-  color: #74808e;
+.order-detail-value {
+  font-size: 26rpx;
+  color: #475569;
 }
 
-.order-bottom {
-  margin-top: 20rpx;
+.order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #f1f5f9;
 }
 
 .order-amount {
-  font-size: 38rpx;
+  font-size: 34rpx;
   font-weight: 700;
-  color: #ff7b58;
+  color: #0f766e;
 }
 
-.badge {
-  padding: 10rpx 18rpx;
+.order-pass-btn {
+  padding: 12rpx 28rpx;
   border-radius: 999rpx;
+  background: #0f766e;
+  color: #ffffff;
   font-size: 24rpx;
   font-weight: 600;
 }
-
-.badge.paid {
-  background: rgba(108, 209, 177, 0.16);
-  color: #2a7a69;
-}
-
-.badge.pending {
-  background: rgba(255, 196, 125, 0.2);
-  color: #b46a21;
-}
-
-.empty-state {
-}
-
-.empty-state.warm {
-  background: linear-gradient(145deg, #fffaf4 0%, #fff1e5 100%);
-}
-
-.empty-state.soft {
-  background: linear-gradient(145deg, #ffffff 0%, #fff7f1 100%);
-}
-

@@ -1,134 +1,195 @@
-<view class="page page-stack">
-  <view class="progress-strip surface-card">
-    <view class="progress-head">
-      <view class="status-pill mint">预约流程</view>
-      <view class="progress-caption">1 选服务 · 2 填信息 · 3 完成预约</view>
+<view class="page">
+  <!-- 步骤指示器 -->
+  <view class="steps" wx:if="{{!loading && !error && products.length}}">
+    <view class="step {{step >= 1 ? 'active' : ''}}">
+      <view class="step-num">1</view>
+      <view class="step-label">选服务</view>
     </view>
-    <view class="helper-copy">{{progressNote}}</view>
-  </view>
-
-  <view class="hero-shell page-hero mint">
-    <view class="page-hero-copy">
-      <view class="hero-kicker">今日安排</view>
-      <view id="tickets-page-title" class="page-hero-title">选好服务，轻松到店</view>
-      <view class="page-hero-text">从门票、洗护到寄养，一次完成预约确认</view>
+    <view class="step-line {{step >= 2 ? 'active' : ''}}"></view>
+    <view class="step {{step >= 2 ? 'active' : ''}}">
+      <view class="step-num">2</view>
+      <view class="step-label">填信息</view>
     </view>
-    <view class="hero-meta-card">
-      <view>
-        <view class="hero-meta-label">当前会员</view>
-        <view class="hero-meta-value">{{memberName}}</view>
-        <view class="hero-meta-desc">{{storeName}}</view>
-      </view>
-      <view class="hero-price-panel">
-        <view class="hero-meta-label">起步价</view>
-        <view class="hero-price">¥{{selectedProductPrice || '--'}}</view>
-      </view>
+    <view class="step-line {{step >= 3 ? 'active' : ''}}"></view>
+    <view class="step {{step >= 3 ? 'active' : ''}}">
+      <view class="step-num">3</view>
+      <view class="step-label">确认</view>
     </view>
   </view>
 
-  <view wx:if="{{loading}}" class="empty-card page-empty">正在加载服务...</view>
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:180rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:180rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:180rpx;"></view>
+  </view>
 
-  <block wx:elif="{{products.length}}">
-    <view class="section-head">
-      <view>
-        <view class="section-kicker">步骤 1</view>
-        <view class="section-title">挑选最适合今天的服务</view>
-        <view class="section-copy">优先给出能直接决定的关键信息，降低来回比较成本。</view>
-      </view>
-      <view class="section-note">共 {{products.length}} 项</view>
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">预约页加载失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <!-- 无可预约服务 -->
+  <view wx:elif="{{!products.length}}" class="empty-card">
+    <view class="state-title">暂无可预约服务</view>
+    <view class="state-desc">当前还没有开放的门票或服务项目，请稍后再来。</view>
+  </view>
+
+  <!-- Step 1: 选服务 -->
+  <block wx:elif="{{step === 1}}">
+    <view class="page-header fade-in">
+      <view class="page-title">选择服务</view>
+      <view class="page-subtitle">请选择您想预约的服务项目</view>
     </view>
-    <view wx:for="{{products}}" wx:key="code" class="card service-card {{item.toneClass}} {{selectedProductCode === item.code ? 'selected' : ''}}">
-      <view class="service-top">
-        <view class="service-badge">{{item.badge}}</view>
-        <view class="service-action-tag">{{selectedProductCode === item.code ? '已选中' : '可预约'}}</view>
+
+    <view
+      wx:for="{{products}}"
+      wx:key="code"
+      class="product-card {{selectedIndex === index ? 'selected' : ''}} fade-in"
+      data-index="{{index}}"
+      bindtap="selectProduct"
+    >
+      <view class="product-top">
+        <view class="product-name">{{item.name}}</view>
+        <view wx:if="{{item.tags[0]}}" class="product-tag">{{item.tags[0]}}</view>
       </view>
-      <view class="name">{{item.name}}</view>
-      <view class="desc">{{item.desc}}</view>
-      <view class="service-accent">{{item.accent}}</view>
-      <view class="card-foot">
-        <view class="price">¥{{item.price}}</view>
-        <view
-          id="select-product-{{item.code}}"
-          class="action {{selectedProductCode === item.code ? 'active' : ''}}"
-          data-index="{{index}}"
-          bindtap="selectProduct"
-        >
-          {{selectedProductCode === item.code ? '已选择' : '立即预约'}}
+      <view class="product-desc">{{item.desc}}</view>
+      <view class="product-bottom">
+        <view class="product-price">
+          <text class="price-unit">¥</text>{{item.price}}
+        </view>
+        <view class="product-check {{selectedIndex === index ? 'checked' : ''}}">
+          {{selectedIndex === index ? '已选' : '选择'}}
         </view>
       </view>
     </view>
 
-    <view class="selection-card {{selectedProductTone}}">
-      <view class="selection-head">
-        <view>
-          <view class="section-kicker">步骤 2</view>
-          <view class="selection-title">确认到店信息</view>
-        </view>
-        <view class="selection-badge">{{selectedProductBadge}}</view>
+    <view class="bottom-bar">
+      <view class="bottom-info">
+        <text wx:if="{{selectedProductName}}">已选：{{selectedProductName}}</text>
+        <text wx:else class="muted">请选择服务项目</text>
       </view>
-      <view id="selected-product-name" class="selection-name">{{selectedProductName}}</view>
-      <view class="selection-desc">{{selectedProductDesc}}</view>
-      <view class="selection-accent">{{selectedProductAccent}}</view>
-    </view>
-
-    <view class="form-card">
-      <view class="form-title">预约确认</view>
-      <view class="form-subtitle">补充宠物、日期和时段后即可提交</view>
-
-      <view wx:if="{{!pets.length}}" class="inline-alert">
-        <view class="status-pill soft">需要完善</view>
-        <view class="inline-alert-copy">当前没有可用宠物档案，暂时无法提交预约。</view>
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">预约项目</view>
-        <view class="form-value">{{selectedProductName}}</view>
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">服务说明</view>
-        <view class="form-value muted">{{selectedProductDesc}}</view>
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">预约门店</view>
-        <view class="form-value">{{storeName}}</view>
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">宠物档案</view>
-        <picker range="{{petNames}}" value="{{selectedPetIndex}}" bindchange="bindPetChange">
-          <view class="picker-value">{{selectedPetName}}</view>
-        </picker>
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">预约日期</view>
-        <picker mode="date" value="{{reservationDate}}" start="{{today}}" bindchange="bindDateChange">
-          <view class="picker-value">{{reservationDate}}</view>
-        </picker>
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">预约时段</view>
-        <picker range="{{timeSlots}}" value="{{timeSlotIndex}}" bindchange="bindTimeSlotChange">
-          <view class="picker-value">{{selectedTimeSlot}}</view>
-        </picker>
-      </view>
-
-      <view class="summary-card">
-        <view>
-          <view class="summary-label">应付金额</view>
-          <view class="summary-caption">提交后可在订单页查看凭证</view>
-        </view>
-        <view id="selected-product-price" class="summary-price">¥{{selectedProductPrice}}</view>
-      </view>
-
-      <button id="tickets-submit" class="submit-btn" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting || !pets.length}}">
-        确认并预约
-      </button>
+      <button class="bottom-btn" disabled="{{!selectedProductCode}}" bindtap="nextStep">下一步</button>
     </view>
   </block>
 
-  <view wx:else class="empty-card">暂无可预约服务</view>
+  <!-- Step 2: 填信息 -->
+  <block wx:elif="{{step === 2}}">
+    <view class="page-header fade-in">
+      <view class="page-title">预约信息</view>
+      <view class="page-subtitle">{{selectedProductName}} · ¥{{selectedProductPrice}}</view>
+    </view>
+
+    <!-- 无宠物警告 -->
+    <view wx:if="{{!pets.length}}" class="warn-card fade-in">
+      <view class="warn-title">还没有宠物档案</view>
+      <view class="warn-desc">请先添加宠物信息后再预约服务</view>
+      <button class="warn-btn" bindtap="openPets">去添加宠物</button>
+    </view>
+
+    <view class="form-section fade-in">
+      <!-- 预约门店 -->
+      <view class="form-item">
+        <view class="form-label">预约门店</view>
+        <view class="form-readonly">{{storeName}}</view>
+      </view>
+
+      <!-- 宠物选择 -->
+      <view class="form-item">
+        <view class="form-label">宠物档案</view>
+        <picker
+          wx:if="{{pets.length}}"
+          range="{{petNames}}"
+          value="{{selectedPetIndex}}"
+          bindchange="bindPetChange"
+        >
+          <view class="form-picker">
+            <text>{{selectedPetName}}</text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
+        <view wx:else class="form-empty" bindtap="openPets">点击添加宠物</view>
+      </view>
+
+      <!-- 日期选择 -->
+      <view class="form-item">
+        <view class="form-label">预约日期</view>
+        <picker mode="date" value="{{reservationDate}}" start="{{today}}" bindchange="bindDateChange">
+          <view class="form-picker">
+            <text>{{reservationDateLabel}} {{reservationDate}}</text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 时段选择（标签式） -->
+      <view class="form-item">
+        <view class="form-label">预约时段</view>
+        <view class="slot-grid">
+          <view
+            wx:for="{{timeSlots}}"
+            wx:key="*this"
+            class="slot-tag {{selectedTimeSlot === item ? 'active' : ''}}"
+            data-slot="{{item}}"
+            bindtap="selectTimeSlot"
+          >{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-bar">
+      <button class="bottom-btn-ghost" bindtap="prevStep">上一步</button>
+      <button class="bottom-btn" disabled="{{!pets.length || !selectedTimeSlot}}" bindtap="goToConfirm">下一步</button>
+    </view>
+  </block>
+
+  <!-- Step 3: 确认提交 -->
+  <block wx:elif="{{step === 3}}">
+    <view class="page-header fade-in">
+      <view class="page-title">确认预约</view>
+      <view class="page-subtitle">请确认以下预约信息</view>
+    </view>
+
+    <view class="confirm-card fade-in">
+      <view class="confirm-row">
+        <view class="confirm-label">服务项目</view>
+        <view class="confirm-value">{{selectedProductName}}</view>
+      </view>
+      <view class="confirm-row">
+        <view class="confirm-label">服务说明</view>
+        <view class="confirm-value muted">{{selectedProductDesc}}</view>
+      </view>
+      <view class="divider"></view>
+      <view class="confirm-row">
+        <view class="confirm-label">预约门店</view>
+        <view class="confirm-value">{{storeName}}</view>
+      </view>
+      <view class="confirm-row">
+        <view class="confirm-label">宠物档案</view>
+        <view class="confirm-value">{{selectedPetName}}</view>
+      </view>
+      <view class="confirm-row">
+        <view class="confirm-label">预约日期</view>
+        <view class="confirm-value">{{reservationDateLabel}} {{reservationDate}}</view>
+      </view>
+      <view class="confirm-row">
+        <view class="confirm-label">预约时段</view>
+        <view class="confirm-value">{{selectedTimeSlot}}</view>
+      </view>
+      <view class="divider"></view>
+      <view class="confirm-total">
+        <view class="confirm-label">应付金额</view>
+        <view class="confirm-price">¥{{selectedProductPrice}}</view>
+      </view>
+    </view>
+
+    <view class="bottom-bar">
+      <button class="bottom-btn-ghost" bindtap="prevStep">上一步</button>
+      <button class="bottom-btn submit" bindtap="submitReservation" loading="{{submitting}}" disabled="{{submitting}}">
+        确认并提交
+      </button>
+    </view>
+  </block>
 </view>

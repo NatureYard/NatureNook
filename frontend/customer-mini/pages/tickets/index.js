@@ -1,197 +1,214 @@
-const { request } = require('../../utils/request')
+var api = require('../../utils/api')
+var fmt = require('../../utils/formatters')
+var req = require('../../utils/request')
 
-const DEFAULT_TIME_SLOTS = ['09:00-12:00', '13:00-15:00', '15:00-18:00']
-
-const productToneMap = {
-  TICKET: { badge: '入园热门', toneClass: 'tone-sun', accent: '当日多次出入' },
-  GROOMING: { badge: '颜值焕新', toneClass: 'tone-rose', accent: '美容护理更省心' },
-  BOARDING: { badge: '安心托管', toneClass: 'tone-mint', accent: '按天预约，灵活到店' },
-}
+var DEFAULT_TIME_SLOTS = ['09:00-12:00', '13:00-15:00', '15:00-18:00']
 
 function getToday() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = `${now.getMonth() + 1}`.padStart(2, '0')
-  const day = `${now.getDate()}`.padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function mapProduct(product) {
-  const meta = productToneMap[product.type] || { badge: '精选服务', toneClass: 'tone-sun', accent: '立即安排今日行程' }
-  return {
-    ...product,
-    badge: meta.badge,
-    toneClass: meta.toneClass,
-    accent: meta.accent,
-  }
-}
-
-function buildProgressNote(hasPets, selectedProductName) {
-  if (!selectedProductName) return '先选择服务，再补充宠物、日期与时段。'
-  if (!hasPets) return '当前还没有可预约的宠物档案，请先完善宠物信息。'
-  return `已选择 ${selectedProductName}，继续确认宠物、日期和时段即可提交。`
+  var now = new Date()
+  var y = now.getFullYear()
+  var m = String(now.getMonth() + 1).padStart(2, '0')
+  var d = String(now.getDate()).padStart(2, '0')
+  return y + '-' + m + '-' + d
 }
 
 Page({
   data: {
+    loading: true,
+    error: '',
+
+    step: 1,
+
     products: [],
     pets: [],
     petNames: [],
     memberName: '当前会员',
     storeName: '未分配门店',
+
+    selectedIndex: -1,
     selectedProductCode: '',
     selectedProductName: '',
     selectedProductDesc: '',
     selectedProductPrice: '',
-    selectedProductBadge: '',
-    selectedProductAccent: '',
-    selectedProductTone: '',
+    selectedProductTags: [],
+
     selectedPetIndex: 0,
     selectedPetName: '',
     reservationDate: getToday(),
+    reservationDateLabel: '今天',
     today: getToday(),
     timeSlots: DEFAULT_TIME_SLOTS,
-    timeSlotIndex: 0,
-    selectedTimeSlot: DEFAULT_TIME_SLOTS[0],
-    progressNote: '先选择服务，再补充宠物、日期与时段。',
-    loading: true,
+    selectedTimeSlot: '',
+
     submitting: false,
   },
 
-  onLoad() {
+  onLoad: function () {
     this.loadPage()
   },
 
-  loadPage() {
-    Promise.all([request('/api/c-app/tickets'), request('/api/c-app/context')])
-      .then(([products, context]) => {
-        this.applyPageData(products, context)
+  onPullDownRefresh: function () {
+    this.loadPage()
+  },
+
+  loadPage: function () {
+    this.setData({ loading: true, error: '', step: 1 })
+    var self = this
+
+    Promise.all([api.fetchTickets(), api.fetchContext()])
+      .then(function (results) {
+        self.applyPageData(results[0], results[1])
       })
-      .catch(() => {
-        this.applyPageData(
-          [
-            { code: 'DAY_TICKET', name: '单次门票', desc: '支持当日多次出入', price: '68.00', type: 'TICKET' },
-            { code: 'GROOMING_PACKAGE', name: '洗护套餐', desc: '含基础洗护与护理', price: '128.00', type: 'GROOMING' },
-            { code: 'BOARDING_DAY', name: '寄养预约', desc: '按天预约，可追加喂养服务', price: '188.00', type: 'BOARDING' },
-          ],
-          {
-            memberName: '张三',
-            storeName: '上海萌宠乐园旗舰店',
-            pets: [
-              { id: 1, name: '奶球' },
-              { id: 3, name: '可乐' },
-            ],
-          },
-        )
+      .catch(function (error) {
+        self.setData({
+          loading: false,
+          error: error.message || '预约页加载失败，请稍后重试',
+        })
+      })
+      .then(function () {
+        wx.stopPullDownRefresh()
       })
   },
 
-  applyPageData(products, context) {
-    const safeProducts = (products || []).map(mapProduct)
-    const safePets = context?.pets || []
-    const firstProduct = safeProducts[0] || {}
+  applyPageData: function (products, context) {
+    var safeProducts = products || []
+    var safePets = (context && context.pets) ? context.pets : []
+
     this.setData({
+      loading: false,
       products: safeProducts,
       pets: safePets,
-      petNames: safePets.map((item) => item.name),
-      memberName: context?.memberName || '当前会员',
-      storeName: context?.storeName || '未分配门店',
-      selectedProductCode: firstProduct.code || '',
-      selectedProductName: firstProduct.name || '',
-      selectedProductDesc: firstProduct.desc || '',
-      selectedProductPrice: firstProduct.price || '',
-      selectedProductBadge: firstProduct.badge || '',
-      selectedProductAccent: firstProduct.accent || '',
-      selectedProductTone: firstProduct.toneClass || '',
+      petNames: safePets.map(function (p) { return p.name }),
+      memberName: (context && context.memberName) ? context.memberName : '当前会员',
+      storeName: (context && context.storeName) ? context.storeName : '未分配门店',
+      selectedIndex: -1,
+      selectedProductCode: '',
+      selectedProductName: '',
+      selectedProductDesc: '',
+      selectedProductPrice: '',
+      selectedProductTags: [],
       selectedPetIndex: 0,
-      selectedPetName: safePets[0]?.name || '暂无宠物档案',
+      selectedPetName: safePets[0] ? safePets[0].name : '',
       reservationDate: getToday(),
+      reservationDateLabel: '今天',
       today: getToday(),
-      timeSlots: DEFAULT_TIME_SLOTS,
-      timeSlotIndex: 0,
-      selectedTimeSlot: DEFAULT_TIME_SLOTS[0],
-      progressNote: buildProgressNote(safePets.length > 0, firstProduct.name || ''),
-      loading: false,
+      selectedTimeSlot: '',
     })
   },
 
-  selectProduct(event) {
-    const index = Number(event.currentTarget.dataset.index)
-    const product = this.data.products[index]
+  /* ── Step 1: 选服务 ── */
+
+  selectProduct: function (event) {
+    var index = Number(event.currentTarget.dataset.index)
+    var product = this.data.products[index]
     if (!product) return
+
     this.setData({
+      selectedIndex: index,
       selectedProductCode: product.code,
       selectedProductName: product.name,
       selectedProductDesc: product.desc,
-      selectedProductPrice: product.price,
-      selectedProductBadge: product.badge,
-      selectedProductAccent: product.accent,
-      selectedProductTone: product.toneClass,
-      progressNote: buildProgressNote(this.data.pets.length > 0, product.name),
+      selectedProductPrice: fmt.formatPrice(product.price),
+      selectedProductTags: product.tags || [],
     })
   },
 
-  bindPetChange(event) {
-    const selectedPetIndex = Number(event.detail.value)
-    this.setData({
-      selectedPetIndex,
-      selectedPetName: this.data.pets[selectedPetIndex]?.name || '暂无宠物档案',
-    })
-  },
-
-  bindDateChange(event) {
-    this.setData({
-      reservationDate: event.detail.value,
-    })
-  },
-
-  bindTimeSlotChange(event) {
-    const timeSlotIndex = Number(event.detail.value)
-    this.setData({
-      timeSlotIndex,
-      selectedTimeSlot: this.data.timeSlots[timeSlotIndex],
-    })
-  },
-
-  submitReservation() {
-    if (this.data.submitting) return
-
-    const selectedPet = this.data.pets[this.data.selectedPetIndex]
+  nextStep: function () {
     if (!this.data.selectedProductCode) {
-      wx.showToast({ title: '请选择预约项目', icon: 'none' })
+      wx.showToast({ title: '请先选择一个服务项目', icon: 'none' })
       return
     }
+    this.setData({ step: 2 })
+  },
+
+  /* ── Step 2: 填信息 ── */
+
+  prevStep: function () {
+    this.setData({ step: this.data.step - 1 })
+  },
+
+  bindPetChange: function (event) {
+    var idx = Number(event.detail.value)
+    var pet = this.data.pets[idx]
+    this.setData({
+      selectedPetIndex: idx,
+      selectedPetName: pet ? pet.name : '',
+    })
+  },
+
+  bindDateChange: function (event) {
+    var date = event.detail.value
+    this.setData({
+      reservationDate: date,
+      reservationDateLabel: fmt.formatDateFriendly(date),
+    })
+  },
+
+  selectTimeSlot: function (event) {
+    var slot = event.currentTarget.dataset.slot
+    this.setData({ selectedTimeSlot: slot })
+  },
+
+  goToConfirm: function () {
+    if (!this.data.pets.length) {
+      wx.showToast({ title: '请先添加宠物档案', icon: 'none' })
+      return
+    }
+    if (!this.data.selectedTimeSlot) {
+      wx.showToast({ title: '请选择预约时段', icon: 'none' })
+      return
+    }
+    if (this.data.reservationDate < this.data.today) {
+      wx.showToast({ title: '预约日期不能早于今天', icon: 'none' })
+      return
+    }
+    this.setData({ step: 3 })
+  },
+
+  openPets: function () {
+    wx.navigateTo({ url: '/pages/pets/index' })
+  },
+
+  /* ── Step 3: 确认提交 ── */
+
+  submitReservation: function () {
+    if (this.data.submitting) return
+
+    var selectedPet = this.data.pets[this.data.selectedPetIndex]
     if (!selectedPet) {
-      wx.showToast({ title: '请先完善宠物档案', icon: 'none' })
+      wx.showToast({ title: '宠物档案异常，请返回重选', icon: 'none' })
       return
     }
 
     this.setData({ submitting: true })
-    request('/api/c-app/reservations', {
-      method: 'POST',
-      data: {
-        ticketCode: this.data.selectedProductCode,
-        reservationDate: this.data.reservationDate,
-        timeSlot: this.data.selectedTimeSlot,
-        petId: selectedPet.id,
-      },
+    var self = this
+
+    api.createReservation({
+      ticketCode: this.data.selectedProductCode,
+      reservationDate: this.data.reservationDate,
+      timeSlot: this.data.selectedTimeSlot,
+      petId: selectedPet.id,
     })
-      .then(() => {
-        wx.showToast({ title: '预约成功', icon: 'success' })
-        setTimeout(() => {
-          wx.switchTab({
-            url: '/pages/orders/index',
-          })
-        }, 300)
-      })
-      .catch((error) => {
-        wx.showToast({
-          title: error.message || '预约失败',
-          icon: 'none',
+      .then(function (result) {
+        wx.showModal({
+          title: '预约成功',
+          content: '订单号 ' + ((result && result.orderNo) ? result.orderNo : '--') + '\n可前往订单页查看详情和入园凭证。',
+          showCancel: false,
+          confirmText: '查看订单',
+          success: function () {
+            wx.switchTab({ url: '/pages/orders/index' })
+          },
         })
       })
-      .finally(() => {
-        this.setData({ submitting: false })
+      .catch(function (error) {
+        req.showRequestError(error, '预约失败，请稍后重试')
       })
+      .then(function () {
+        self.setData({ submitting: false })
+      })
+  },
+
+  retry: function () {
+    this.loadPage()
   },
 })
