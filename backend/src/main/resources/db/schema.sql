@@ -28,6 +28,7 @@ create table if not exists member (
     level varchar(32) not null default 'NORMAL',
     face_bound boolean not null default false,
     risk_tag varchar(32) not null default 'NORMAL',
+    wx_openid varchar(64),
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );

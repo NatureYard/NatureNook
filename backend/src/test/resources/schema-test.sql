@@ -24,7 +24,8 @@ create table member (
     phone varchar(32) not null unique,
     level varchar(32) not null default 'NORMAL',
     face_bound boolean not null default false,
-    risk_tag varchar(32) not null default 'NORMAL'
+    risk_tag varchar(32) not null default 'NORMAL',
+    wx_openid varchar(64)
 );
 
 create table pet_profile (
@@ -71,7 +72,9 @@ create table customer_order (
     order_type varchar(32) not null,
     status varchar(32) not null,
     payable_amount numeric(12,2) not null default 0,
-    paid_amount numeric(12,2) not null default 0
+    paid_amount numeric(12,2) not null default 0,
+    wx_prepay_id varchar(128),
+    paid_at timestamp
 );
 
 create table gate_device (

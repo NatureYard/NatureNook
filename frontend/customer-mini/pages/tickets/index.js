@@ -169,7 +169,7 @@ Page({
     wx.navigateTo({ url: '/pages/pets/index' })
   },
 
-  /* ── Step 3: 确认提交 ── */
+  /* ── Step 3: 确认提交并支付 ── */
 
   submitReservation: function () {
     if (this.data.submitting) return
@@ -182,7 +182,9 @@ Page({
 
     this.setData({ submitting: true })
     var self = this
+    var orderNo = ''
 
+    // Step 1: 创建预约订单（状态为 PENDING_PAY）
     api.createReservation({
       ticketCode: this.data.selectedProductCode,
       reservationDate: this.data.reservationDate,
@@ -190,9 +192,25 @@ Page({
       petId: selectedPet.id,
     })
       .then(function (result) {
+        orderNo = (result && result.orderNo) ? result.orderNo : ''
+        if (!orderNo) {
+          throw new Error('订单创建异常')
+        }
+        // Step 2: 获取预支付参数
+        return api.prepay(orderNo)
+      })
+      .then(function (prepayData) {
+        // Step 3: 调用微信支付
+        return self.callWxPayment(prepayData, orderNo)
+      })
+      .then(function () {
+        // Step 4: 支付成功 → 确认支付（开发模式需要；正式环境由微信回调完成）
+        return api.confirmPayment(orderNo)
+      })
+      .then(function () {
         wx.showModal({
-          title: '预约成功',
-          content: '订单号 ' + ((result && result.orderNo) ? result.orderNo : '--') + '\n可前往订单页查看详情和入园凭证。',
+          title: '支付成功',
+          content: '订单号 ' + orderNo + '\n可前往订单页查看详情和入园凭证。',
           showCancel: false,
           confirmText: '查看订单',
           success: function () {
@@ -201,11 +219,58 @@ Page({
         })
       })
       .catch(function (error) {
-        req.showRequestError(error, '预约失败，请稍后重试')
+        var msg = error.message || ''
+        if (msg.indexOf('cancel') >= 0 || msg.indexOf('取消') >= 0) {
+          wx.showToast({ title: '已取消支付', icon: 'none' })
+          // 取消支付后用户可重新支付，跳到订单页
+          if (orderNo) {
+            wx.showModal({
+              title: '订单已创建',
+              content: '您可以稍后在订单页继续支付。',
+              showCancel: false,
+              confirmText: '查看订单',
+              success: function () {
+                wx.switchTab({ url: '/pages/orders/index' })
+              },
+            })
+          }
+        } else {
+          req.showRequestError(error, '预约或支付失败，请稍后重试')
+        }
       })
       .then(function () {
         self.setData({ submitting: false })
       })
+  },
+
+  /**
+   * 调用 wx.requestPayment 发起微信支付。
+   * 开发模式下微信开发者工具不支持真实支付，会自动模拟成功。
+   */
+  callWxPayment: function (prepayData, orderNo) {
+    var config = require('../../utils/config')
+
+    // 开发环境跳过真实支付（微信开发者工具不支持）
+    if (config.shouldUseMockFallback()) {
+      console.log('[payment] 开发模式模拟支付成功: orderNo=' + orderNo)
+      return Promise.resolve()
+    }
+
+    return new Promise(function (resolve, reject) {
+      wx.requestPayment({
+        timeStamp: prepayData.timeStamp,
+        nonceStr: prepayData.nonceStr,
+        package: prepayData.packageValue,
+        signType: prepayData.signType || 'RSA',
+        paySign: prepayData.paySign,
+        success: function () {
+          resolve()
+        },
+        fail: function (err) {
+          reject(new Error(err.errMsg || '支付失败'))
+        },
+      })
+    })
   },
 
   retry: function () {

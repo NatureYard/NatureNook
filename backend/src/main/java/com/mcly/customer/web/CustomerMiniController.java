@@ -11,6 +11,8 @@ import com.mcly.customer.api.CustomerPassResponse;
 import com.mcly.customer.api.CustomerPetResponse;
 import com.mcly.customer.api.CustomerProfileResponse;
 import com.mcly.customer.api.CustomerTicketResponse;
+import com.mcly.customer.api.PrepayRequest;
+import com.mcly.customer.api.PrepayResponse;
 import com.mcly.customer.service.CustomerMiniService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -75,5 +77,24 @@ public class CustomerMiniController {
             @Valid @RequestBody CreateCustomerReservationRequest request
     ) {
         return ApiResponse.ok(customerMiniService.createReservation(request));
+    }
+
+    /**
+     * 预支付：根据订单号生成微信支付参数。
+     * 小程序端拿到参数后调用 wx.requestPayment() 发起支付。
+     */
+    @PostMapping("/prepay")
+    public ApiResponse<PrepayResponse> prepay(@Valid @RequestBody PrepayRequest request) {
+        return ApiResponse.ok(customerMiniService.prepay(request.orderNo()));
+    }
+
+    /**
+     * 确认支付（开发模式使用，正式环境由微信回调触发）。
+     * 将订单从 PENDING_PAY 更新为 PAID 并生成通行资格。
+     */
+    @PostMapping("/payment/confirm")
+    public ApiResponse<Void> confirmPayment(@RequestBody PrepayRequest request) {
+        customerMiniService.confirmPayment(request.orderNo());
+        return ApiResponse.ok(null);
     }
 }

@@ -1,19 +1,10 @@
-const { request } = require('./request')
-const { shouldUseMockFallback } = require('./config')
-const {
-  createMockReservation,
-  getMockCards,
-  getMockContext,
-  getMockHome,
-  getMockOrders,
-  getMockPets,
-  getMockProfile,
-  getMockTickets,
-} = require('./mock')
+var req = require('./request')
+var config = require('./config')
+var mock = require('./mock')
 
 function withFallback(loader, fallbackFactory) {
-  return loader().catch(function(error) {
-    if (shouldUseMockFallback()) {
+  return loader().catch(function (error) {
+    if (config.shouldUseMockFallback()) {
       return fallbackFactory()
     }
     throw error
@@ -21,65 +12,98 @@ function withFallback(loader, fallbackFactory) {
 }
 
 function fetchHome() {
-  return withFallback(function() {
-    return request('/api/c-app/home')
-  }, getMockHome)
+  return withFallback(function () {
+    return req.request('/api/c-app/home')
+  }, mock.getMockHome)
 }
 
 function fetchOrders() {
-  return withFallback(function() {
-    return request('/api/c-app/orders')
-  }, getMockOrders)
+  return withFallback(function () {
+    return req.request('/api/c-app/orders')
+  }, mock.getMockOrders)
 }
 
 function fetchContext() {
-  return withFallback(function() {
-    return request('/api/c-app/context')
-  }, getMockContext)
+  return withFallback(function () {
+    return req.request('/api/c-app/context')
+  }, mock.getMockContext)
 }
 
 function fetchPets() {
-  return withFallback(function() {
-    return request('/api/c-app/pets')
-  }, getMockPets)
+  return withFallback(function () {
+    return req.request('/api/c-app/pets')
+  }, mock.getMockPets)
 }
 
 function fetchCards() {
-  return withFallback(function() {
-    return request('/api/c-app/cards')
-  }, getMockCards)
+  return withFallback(function () {
+    return req.request('/api/c-app/cards')
+  }, mock.getMockCards)
 }
 
 function fetchProfile() {
-  return withFallback(function() {
-    return request('/api/c-app/profile')
-  }, getMockProfile)
+  return withFallback(function () {
+    return req.request('/api/c-app/profile')
+  }, mock.getMockProfile)
 }
 
 function fetchTickets() {
-  return withFallback(function() {
-    return request('/api/c-app/tickets')
-  }, getMockTickets)
+  return withFallback(function () {
+    return req.request('/api/c-app/tickets')
+  }, mock.getMockTickets)
 }
 
+/**
+ * 创建预约。返回 {reservationId, orderId, orderNo, status: "PENDING_PAY"}
+ */
 function createReservation(payload) {
-  return withFallback(function() {
-    return request('/api/c-app/reservations', {
+  return withFallback(function () {
+    return req.request('/api/c-app/reservations', {
       method: 'POST',
       data: payload,
     })
-  }, function() {
-    return createMockReservation(payload)
+  }, function () {
+    return mock.createMockReservation(payload)
+  })
+}
+
+/**
+ * 获取预支付参数。返回 wx.requestPayment 所需的全部参数。
+ */
+function prepay(orderNo) {
+  return withFallback(function () {
+    return req.request('/api/c-app/prepay', {
+      method: 'POST',
+      data: { orderNo: orderNo },
+    })
+  }, function () {
+    return mock.getMockPrepay(orderNo)
+  })
+}
+
+/**
+ * 确认支付完成（开发模式用，正式环境由微信回调触发）。
+ */
+function confirmPayment(orderNo) {
+  return withFallback(function () {
+    return req.request('/api/c-app/payment/confirm', {
+      method: 'POST',
+      data: { orderNo: orderNo },
+    })
+  }, function () {
+    return mock.confirmMockPayment(orderNo)
   })
 }
 
 module.exports = {
-  createReservation,
-  fetchCards,
-  fetchContext,
-  fetchHome,
-  fetchOrders,
-  fetchPets,
-  fetchProfile,
-  fetchTickets,
+  confirmPayment: confirmPayment,
+  createReservation: createReservation,
+  fetchCards: fetchCards,
+  fetchContext: fetchContext,
+  fetchHome: fetchHome,
+  fetchOrders: fetchOrders,
+  fetchPets: fetchPets,
+  fetchProfile: fetchProfile,
+  fetchTickets: fetchTickets,
+  prepay: prepay,
 }

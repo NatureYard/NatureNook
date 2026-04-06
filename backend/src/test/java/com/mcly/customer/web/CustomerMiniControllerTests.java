@@ -70,10 +70,9 @@ class CustomerMiniControllerTests {
 
     @Test
     @Transactional
-    void shouldCreateReservationOrderAndPassEntitlement() throws Exception {
+    void shouldCreateReservationWithPendingPayStatus() throws Exception {
         Integer reservationCountBefore = jdbcTemplate.queryForObject("select count(*) from reservation", Integer.class);
         Integer orderCountBefore = jdbcTemplate.queryForObject("select count(*) from customer_order", Integer.class);
-        Integer entitlementCountBefore = jdbcTemplate.queryForObject("select count(*) from pass_entitlement", Integer.class);
 
         mockMvc.perform(post("/api/c-app/reservations")
                         .contentType("application/json")
@@ -87,15 +86,75 @@ class CustomerMiniControllerTests {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.status").value("PAID"))
+                .andExpect(jsonPath("$.data.status").value("PENDING_PAY"))
                 .andExpect(jsonPath("$.data.orderNo").value(startsWith("ORD20260406")));
 
         Integer reservationCountAfter = jdbcTemplate.queryForObject("select count(*) from reservation", Integer.class);
         Integer orderCountAfter = jdbcTemplate.queryForObject("select count(*) from customer_order", Integer.class);
-        Integer entitlementCountAfter = jdbcTemplate.queryForObject("select count(*) from pass_entitlement", Integer.class);
 
         assertThat(reservationCountAfter).isEqualTo((reservationCountBefore == null ? 0 : reservationCountBefore) + 1);
         assertThat(orderCountAfter).isEqualTo((orderCountBefore == null ? 0 : orderCountBefore) + 1);
+
+        // 验证订单状态是 PENDING_PAY
+        String orderStatus = jdbcTemplate.queryForObject(
+                "select status from customer_order where id = (select max(id) from customer_order)",
+                String.class
+        );
+        assertThat(orderStatus).isEqualTo("PENDING_PAY");
+    }
+
+    @Test
+    @Transactional
+    void shouldCompleteFullPaymentFlow() throws Exception {
+        // Step 1: 创建预约（订单为 PENDING_PAY）
+        var createResult = mockMvc.perform(post("/api/c-app/reservations")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "ticketCode": "DAY_TICKET",
+                                  "reservationDate": "2026-04-06",
+                                  "timeSlot": "09:00-12:00",
+                                  "petId": 1
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("PENDING_PAY"))
+                .andReturn();
+
+        // 从响应中提取 orderNo
+        String responseBody = createResult.getResponse().getContentAsString();
+        String orderNo = com.fasterxml.jackson.databind.ObjectMapper
+                .class.getDeclaredConstructor().newInstance()
+                .readTree(responseBody).get("data").get("orderNo").asText();
+
+        // Step 2: 预支付
+        mockMvc.perform(post("/api/c-app/prepay")
+                        .contentType("application/json")
+                        .content("{\"orderNo\": \"" + orderNo + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.timeStamp").exists())
+                .andExpect(jsonPath("$.data.nonceStr").exists())
+                .andExpect(jsonPath("$.data.paySign").exists())
+                .andExpect(jsonPath("$.data.orderNo").value(orderNo));
+
+        // Step 3: 确认支付
+        Integer entitlementCountBefore = jdbcTemplate.queryForObject("select count(*) from pass_entitlement", Integer.class);
+
+        mockMvc.perform(post("/api/c-app/payment/confirm")
+                        .contentType("application/json")
+                        .content("{\"orderNo\": \"" + orderNo + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 验证订单变为 PAID
+        String finalStatus = jdbcTemplate.queryForObject(
+                "select status from customer_order where order_no = ?",
+                String.class, orderNo
+        );
+        assertThat(finalStatus).isEqualTo("PAID");
+
+        // 验证通行资格已生成
+        Integer entitlementCountAfter = jdbcTemplate.queryForObject("select count(*) from pass_entitlement", Integer.class);
         assertThat(entitlementCountAfter).isEqualTo((entitlementCountBefore == null ? 0 : entitlementCountBefore) + 1);
     }
 
@@ -114,5 +173,18 @@ class CustomerMiniControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("宠物不存在或不属于当前会员"));
+    }
+
+    @Test
+    @Transactional
+    void shouldLoginWithWxCode() throws Exception {
+        mockMvc.perform(post("/api/c-app/login")
+                        .contentType("application/json")
+                        .content("{\"code\": \"test_code_001\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.token").exists())
+                .andExpect(jsonPath("$.data.memberId").exists())
+                .andExpect(jsonPath("$.data.memberName").exists());
     }
 }

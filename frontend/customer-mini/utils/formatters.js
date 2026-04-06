@@ -32,6 +32,7 @@ function getCardStatusClass(status) {
 }
 
 function formatOrderStatus(status) {
+  if (status === 'PENDING_PAY') return '待支付'
   if (status === 'PAID') return '已支付'
   if (status === 'BOOKED') return '已预约'
   if (status === 'USED') return '已使用'
@@ -41,6 +42,7 @@ function formatOrderStatus(status) {
 }
 
 function getOrderStatusClass(status) {
+  if (status === 'PENDING_PAY') return 'pending'
   if (status === 'PAID') return 'paid'
   if (status === 'BOOKED') return 'pending'
   if (status === 'USED') return 'active'

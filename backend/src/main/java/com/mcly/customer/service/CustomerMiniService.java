@@ -10,35 +10,46 @@ import com.mcly.customer.api.CustomerContextResponse;
 import com.mcly.customer.api.CreateCustomerReservationResponse;
 import com.mcly.customer.api.CustomerProfileResponse;
 import com.mcly.customer.api.CustomerTicketResponse;
+import com.mcly.customer.api.PrepayResponse;
 import com.mcly.customer.repository.CustomerMiniQueryRepository;
 import com.mcly.order.repository.CustomerOrderCommandRepository;
 import com.mcly.order.repository.ReservationCommandRepository;
 import com.mcly.pass.repository.PassEntitlementCommandRepository;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CustomerMiniService {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerMiniService.class);
+
     private final CustomerMiniQueryRepository customerMiniQueryRepository;
     private final ReservationCommandRepository reservationCommandRepository;
     private final CustomerOrderCommandRepository customerOrderCommandRepository;
     private final PassEntitlementCommandRepository passEntitlementCommandRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     public CustomerMiniService(
             CustomerMiniQueryRepository customerMiniQueryRepository,
             ReservationCommandRepository reservationCommandRepository,
             CustomerOrderCommandRepository customerOrderCommandRepository,
-            PassEntitlementCommandRepository passEntitlementCommandRepository
+            PassEntitlementCommandRepository passEntitlementCommandRepository,
+            JdbcTemplate jdbcTemplate
     ) {
         this.customerMiniQueryRepository = customerMiniQueryRepository;
         this.reservationCommandRepository = reservationCommandRepository;
         this.customerOrderCommandRepository = customerOrderCommandRepository;
         this.passEntitlementCommandRepository = passEntitlementCommandRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public CustomerHomeResponse home() {
@@ -85,6 +96,10 @@ public class CustomerMiniService {
                 .toList();
     }
 
+    /**
+     * 创建预约和订单。订单初始状态为 PENDING_PAY（待支付）。
+     * 客户端在收到结果后需调用 prepay 获取支付参数，完成支付后订单才会变为 PAID。
+     */
     @Transactional
     public CreateCustomerReservationResponse createReservation(CreateCustomerReservationRequest request) {
         CustomerContextResponse context = customerMiniQueryRepository.context();
@@ -128,20 +143,141 @@ public class CustomerMiniService {
                 reservationId,
                 orderNo,
                 ticket.type(),
-                "PAID",
+                "PENDING_PAY",
                 ticket.price()
         );
 
-        passEntitlementCommandRepository.createDayAccessEntitlement(
-                context.memberId(),
-                context.storeId(),
-                ticket.code(),
-                reservationId,
-                reservationDate,
-                "SAME_DAY_UNLIMITED"
+        return new CreateCustomerReservationResponse(reservationId, orderId, orderNo, "PENDING_PAY");
+    }
+
+    /**
+     * 预支付：生成微信支付参数。
+     * <p>
+     * TODO: 正式上线时替换为真实的微信支付统一下单 API 调用：
+     * POST https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi
+     * 需要商户号、API 密钥、证书等配置。
+     * <p>
+     * 当前为开发模式存根，返回模拟支付参数。
+     */
+    public PrepayResponse prepay(String orderNo) {
+        // 验证订单存在且属于当前会员
+        var orderInfo = jdbcTemplate.query("""
+                select co.id, co.status, co.payable_amount
+                from customer_order co
+                where co.order_no = ?
+                """, rs -> {
+            if (!rs.next()) return null;
+            return new Object[]{
+                    rs.getLong("id"),
+                    rs.getString("status"),
+                    rs.getBigDecimal("payable_amount").toPlainString()
+            };
+        }, orderNo);
+
+        if (orderInfo == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        String status = (String) orderInfo[1];
+        String amount = (String) orderInfo[2];
+
+        if ("PAID".equals(status)) {
+            throw new IllegalArgumentException("订单已支付，无需重复支付");
+        }
+        if (!"PENDING_PAY".equals(status)) {
+            throw new IllegalArgumentException("订单状态异常，无法发起支付");
+        }
+
+        // 开发模式：生成模拟支付参数
+        String timestamp = String.valueOf(Instant.now().getEpochSecond());
+        String nonceStr = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+        String mockPrepayId = "wx_prepay_dev_" + orderNo;
+
+        // 记录 prepay_id
+        jdbcTemplate.update(
+                "update customer_order set wx_prepay_id = ? where order_no = ?",
+                mockPrepayId, orderNo
         );
 
-        return new CreateCustomerReservationResponse(reservationId, orderId, orderNo, "PAID");
+        log.info("[开发模式] 生成模拟预支付参数: orderNo={}, prepayId={}", orderNo, mockPrepayId);
+
+        return new PrepayResponse(
+                timestamp,
+                nonceStr,
+                "prepay_id=" + mockPrepayId,
+                "RSA",
+                "mock_sign_" + nonceStr,
+                orderNo,
+                amount
+        );
+    }
+
+    /**
+     * 确认支付完成（开发模式直接确认；正式环境由微信支付回调触发）。
+     * 将订单状态从 PENDING_PAY 更新为 PAID，并生成通行资格。
+     */
+    @Transactional
+    public void confirmPayment(String orderNo) {
+        var orderInfo = jdbcTemplate.query("""
+                select co.id, co.member_id, co.store_id, co.reservation_id, co.order_type, co.status, co.payable_amount
+                from customer_order co
+                where co.order_no = ?
+                """, rs -> {
+            if (!rs.next()) return null;
+            return new OrderPaymentInfo(
+                    rs.getLong("id"),
+                    rs.getLong("member_id"),
+                    rs.getLong("store_id"),
+                    rs.getObject("reservation_id", Long.class),
+                    rs.getString("order_type"),
+                    rs.getString("status"),
+                    rs.getBigDecimal("payable_amount")
+            );
+        }, orderNo);
+
+        if (orderInfo == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if ("PAID".equals(orderInfo.status())) {
+            return; // 幂等：已支付不重复处理
+        }
+        if (!"PENDING_PAY".equals(orderInfo.status())) {
+            throw new IllegalArgumentException("订单状态异常，无法确认支付");
+        }
+
+        // 更新订单为已支付
+        jdbcTemplate.update(
+                "update customer_order set status = 'PAID', paid_amount = payable_amount, paid_at = current_timestamp where order_no = ?",
+                orderNo
+        );
+
+        // 查询预约信息，生成通行资格
+        if (orderInfo.reservationId() != null) {
+            var reservationDate = jdbcTemplate.query(
+                    "select reservation_date from reservation where id = ?",
+                    rs -> rs.next() ? rs.getDate("reservation_date").toLocalDate() : null,
+                    orderInfo.reservationId()
+            );
+
+            // 查找对应的 ticket code
+            String ticketCode = TICKET_CATALOG.stream()
+                    .filter(t -> t.type().equals(orderInfo.orderType()))
+                    .map(TicketCatalogItem::code)
+                    .findFirst()
+                    .orElse(orderInfo.orderType());
+
+            if (reservationDate != null) {
+                passEntitlementCommandRepository.createDayAccessEntitlement(
+                        orderInfo.memberId(),
+                        orderInfo.storeId(),
+                        ticketCode,
+                        orderInfo.reservationId(),
+                        reservationDate,
+                        "SAME_DAY_UNLIMITED"
+                );
+            }
+        }
+
+        log.info("订单 {} 支付确认完成，已生成通行资格", orderNo);
     }
 
     private static final List<TicketCatalogItem> TICKET_CATALOG = List.of(
@@ -156,6 +292,17 @@ public class CustomerMiniService {
             String desc,
             String type,
             BigDecimal price
+    ) {
+    }
+
+    private record OrderPaymentInfo(
+            Long orderId,
+            Long memberId,
+            Long storeId,
+            Long reservationId,
+            String orderType,
+            String status,
+            BigDecimal payableAmount
     ) {
     }
 }

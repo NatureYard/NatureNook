@@ -1,5 +1,6 @@
 package com.mcly.customer.repository;
 
+import com.mcly.common.auth.AuthContext;
 import com.mcly.common.repository.QuerySupport;
 import com.mcly.customer.api.CustomerCardResponse;
 import com.mcly.customer.api.CustomerContextResponse;
@@ -184,6 +185,12 @@ public class CustomerMiniQueryRepository extends QuerySupport {
     }
 
     private CurrentCustomer currentCustomer() {
+        // 优先从认证上下文获取当前会员（登录后由 AuthInterceptor 写入）
+        Long authMemberId = AuthContext.getMemberId();
+        if (authMemberId != null) {
+            return currentCustomerById(authMemberId);
+        }
+        // 降级：未登录时取第一个会员（开发兼容，正式环境应返回 null）
         return jdbcTemplate.query("""
                 select m.id,
                        m.name,
@@ -208,6 +215,32 @@ public class CustomerMiniQueryRepository extends QuerySupport {
                     rs.getBoolean("face_bound")
             );
         });
+    }
+
+    private CurrentCustomer currentCustomerById(Long memberId) {
+        return jdbcTemplate.query("""
+                select m.id,
+                       m.name,
+                       m.level,
+                       m.face_bound,
+                       s.id as store_id,
+                       coalesce(s.name, '未分配门店') as store_name
+                from member m
+                left join store s on s.id = m.store_id
+                where m.id = ?
+                """, rs -> {
+            if (!rs.next()) {
+                return null;
+            }
+            return new CurrentCustomer(
+                    rs.getLong("id"),
+                    rs.getString("name"),
+                    rs.getString("level"),
+                    rs.getObject("store_id", Long.class),
+                    rs.getString("store_name"),
+                    rs.getBoolean("face_bound")
+            );
+        }, memberId);
     }
 
     private String toCardName(String cardType) {

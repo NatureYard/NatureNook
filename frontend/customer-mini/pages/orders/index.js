@@ -1,11 +1,13 @@
 var api = require('../../utils/api')
 var fmt = require('../../utils/formatters')
+var config = require('../../utils/config')
+var req = require('../../utils/request')
 
 var TABS = [
   { key: 'all', label: '全部' },
+  { key: 'pending_pay', label: '待支付' },
   { key: 'active', label: '待使用' },
   { key: 'done', label: '已完成' },
-  { key: 'other', label: '其他' },
 ]
 
 Page({
@@ -47,6 +49,7 @@ Page({
             createdAt: item.createdAt || '',
             isToday: isToday,
             canUse: (item.status === 'PAID' || item.status === 'BOOKED') && isToday,
+            needPay: item.status === 'PENDING_PAY',
           }
         })
 
@@ -79,17 +82,17 @@ Page({
     var all = this.data.allOrders
     var filtered
 
-    if (tab === 'active') {
+    if (tab === 'pending_pay') {
+      filtered = all.filter(function (o) {
+        return o.rawStatus === 'PENDING_PAY'
+      })
+    } else if (tab === 'active') {
       filtered = all.filter(function (o) {
         return o.rawStatus === 'PAID' || o.rawStatus === 'BOOKED'
       })
     } else if (tab === 'done') {
       filtered = all.filter(function (o) {
-        return o.rawStatus === 'USED'
-      })
-    } else if (tab === 'other') {
-      filtered = all.filter(function (o) {
-        return o.rawStatus === 'CANCELLED' || o.rawStatus === 'REFUNDED'
+        return o.rawStatus === 'USED' || o.rawStatus === 'CANCELLED' || o.rawStatus === 'REFUNDED'
       })
     } else {
       filtered = all
@@ -104,5 +107,49 @@ Page({
 
   openTickets: function () {
     wx.switchTab({ url: '/pages/tickets/index' })
+  },
+
+  payOrder: function (event) {
+    var orderNo = event.currentTarget.dataset.orderno
+    if (!orderNo) return
+
+    var self = this
+    wx.showLoading({ title: '发起支付...' })
+
+    api.prepay(orderNo)
+      .then(function (prepayData) {
+        wx.hideLoading()
+        // 开发模式跳过真实支付
+        if (config.shouldUseMockFallback()) {
+          return Promise.resolve()
+        }
+        return new Promise(function (resolve, reject) {
+          wx.requestPayment({
+            timeStamp: prepayData.timeStamp,
+            nonceStr: prepayData.nonceStr,
+            package: prepayData.packageValue,
+            signType: prepayData.signType || 'RSA',
+            paySign: prepayData.paySign,
+            success: function () { resolve() },
+            fail: function (err) { reject(new Error(err.errMsg || '支付失败')) },
+          })
+        })
+      })
+      .then(function () {
+        return api.confirmPayment(orderNo)
+      })
+      .then(function () {
+        wx.showToast({ title: '支付成功', icon: 'success' })
+        self.loadOrders()
+      })
+      .catch(function (error) {
+        wx.hideLoading()
+        var msg = error.message || ''
+        if (msg.indexOf('cancel') >= 0 || msg.indexOf('取消') >= 0) {
+          wx.showToast({ title: '已取消支付', icon: 'none' })
+        } else {
+          req.showRequestError(error, '支付失败，请稍后重试')
+        }
+      })
   },
 })

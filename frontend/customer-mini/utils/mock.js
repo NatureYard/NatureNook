@@ -200,7 +200,7 @@ function createMockReservation(payload) {
     id: orders.length + 1,
     orderNo: orderNo,
     type: selectedTicket.name,
-    status: 'PAID',
+    status: 'PENDING_PAY',
     amount: selectedTicket.price,
     storeName: '上海萌宠乐园旗舰店',
     reservationDate: payload.reservationDate,
@@ -214,17 +214,49 @@ function createMockReservation(payload) {
     reservationId: Date.now(),
     orderId: Date.now() + 1,
     orderNo: orderNo,
-    status: 'PAID',
+    status: 'PENDING_PAY',
   }
 }
 
+/**
+ * 模拟预支付参数。
+ */
+function getMockPrepay(orderNo) {
+  return {
+    timeStamp: String(Math.floor(Date.now() / 1000)),
+    nonceStr: 'mock_nonce_' + Date.now(),
+    packageValue: 'prepay_id=wx_mock_' + orderNo,
+    signType: 'RSA',
+    paySign: 'mock_sign_dev',
+    orderNo: orderNo,
+    amount: '0.00',
+  }
+}
+
+/**
+ * 模拟确认支付：将 mock 订单状态从 PENDING_PAY 改为 PAID。
+ */
+function confirmMockPayment(orderNo) {
+  var orders = readMockOrders()
+  var updated = orders.map(function (o) {
+    if (o.orderNo === orderNo && o.status === 'PENDING_PAY') {
+      return Object.assign({}, o, { status: 'PAID' })
+    }
+    return o
+  })
+  writeMockOrders(updated)
+  return null
+}
+
 module.exports = {
-  createMockReservation,
-  getMockCards,
-  getMockContext,
-  getMockHome,
-  getMockOrders,
-  getMockPets,
-  getMockProfile,
-  getMockTickets,
+  confirmMockPayment: confirmMockPayment,
+  createMockReservation: createMockReservation,
+  getMockCards: getMockCards,
+  getMockContext: getMockContext,
+  getMockHome: getMockHome,
+  getMockOrders: getMockOrders,
+  getMockPets: getMockPets,
+  getMockPrepay: getMockPrepay,
+  getMockProfile: getMockProfile,
+  getMockTickets: getMockTickets,
 }
