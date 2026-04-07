@@ -1,0 +1,87 @@
+.tab-shell {
+  position: fixed;
+  left: 20rpx;
+  right: 20rpx;
+  bottom: calc(env(safe-area-inset-bottom) + 12rpx);
+  z-index: 999;
+}
+
+.tab-backdrop {
+  position: absolute;
+  inset: 0;
+  border-radius: 30rpx;
+  background: linear-gradient(135deg, rgba(255, 247, 238, 0.96) 0%, rgba(255, 241, 228, 0.94) 100%);
+  box-shadow: 0 16rpx 38rpx rgba(108, 72, 46, 0.14);
+}
+
+.tab-bar {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 8rpx;
+  padding: 12rpx;
+  border-radius: 30rpx;
+  backdrop-filter: blur(18rpx);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 94rpx;
+  border-radius: 24rpx;
+  color: #8b7d6b;
+  transition: all 180ms ease;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #ff845d 0%, #ffb067 100%);
+  color: #ffffff;
+  box-shadow: 0 10rpx 24rpx rgba(255, 132, 93, 0.22);
+}
+
+.tab-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.tab-dot {
+  position: absolute;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 14rpx;
+  background: rgba(139, 125, 107, 0.1);
+}
+
+.tab-item.active .tab-dot {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.tab-icon {
+  position: relative;
+  font-size: 18rpx;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+.tab-text {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.6rpx;
+}
+
+.tab-caption {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  line-height: 1.2;
+  opacity: 0.86;
+}

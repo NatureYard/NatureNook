@@ -28,6 +28,7 @@ create table if not exists member (
     level varchar(32) not null default 'NORMAL',
     face_bound boolean not null default false,
     risk_tag varchar(32) not null default 'NORMAL',
+    wx_openid varchar(64),
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
@@ -63,6 +64,7 @@ create table if not exists reservation (
     id bigserial primary key,
     member_id bigint not null references member(id),
     store_id bigint not null references store(id),
+    pet_id bigint references pet_profile(id),
     reservation_type varchar(32) not null,
     reservation_date date not null,
     time_slot varchar(32) not null,
@@ -77,6 +79,7 @@ create table if not exists customer_order (
     id bigserial primary key,
     member_id bigint not null references member(id),
     store_id bigint not null references store(id),
+    reservation_id bigint references reservation(id),
     order_no varchar(64) not null unique,
     order_type varchar(32) not null,
     status varchar(32) not null,
@@ -200,10 +203,11 @@ create table if not exists risk_event (
 );
 
 create index if not exists idx_reservation_store_date on reservation(store_id, reservation_date, status);
+create index if not exists idx_reservation_pet on reservation(pet_id);
 create index if not exists idx_order_member_status on customer_order(member_id, status);
 create index if not exists idx_pass_entitlement_member_store on pass_entitlement(member_id, store_id, status);
+create index if not exists idx_pass_entitlement_source on pass_entitlement(source_type, source_id);
 create index if not exists idx_entry_exit_store_time on entry_exit_record(store_id, occurred_at desc);
 create index if not exists idx_manual_release_store_time on manual_release_record(store_id, created_at desc);
 create index if not exists idx_material_stock_item on material_stock(material_item_id);
 create index if not exists idx_risk_event_store_time on risk_event(store_id, created_at desc);
-

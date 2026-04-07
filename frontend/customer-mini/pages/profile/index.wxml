@@ -1,8 +1,91 @@
 <view class="page">
-  <view class="hero">
-    <view class="name">当前会员</view>
-    <view class="desc">查看权益、凭证和售后记录</view>
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:240rpx;border-radius:32rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:120rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:200rpx;"></view>
   </view>
-  <view wx:for="{{items}}" wx:key="*this" class="card">{{item}}</view>
-</view>
 
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">会员信息加载失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <!-- 会员 Hero -->
+    <view id="profile-page-root" class="hero fade-in">
+      <view class="hero-avatar">{{avatar}}</view>
+      <view class="hero-info">
+        <view id="profile-member-name" class="hero-name">{{memberName}}</view>
+        <view class="hero-level">{{memberLevel}}</view>
+      </view>
+      <view class="hero-store">{{storeName}}</view>
+    </view>
+
+    <!-- 统计行 -->
+    <view class="stats-row fade-in">
+      <view class="stat-item" bindtap="openOrders">
+        <view class="stat-value">{{orderCount}}</view>
+        <view class="stat-label">订单</view>
+      </view>
+      <view class="stat-item" bindtap="openPets">
+        <view class="stat-value">{{petCount}}</view>
+        <view class="stat-label">宠物</view>
+      </view>
+      <view class="stat-item" bindtap="openCards">
+        <view class="stat-value">{{cardCount}}</view>
+        <view class="stat-label">卡种</view>
+      </view>
+    </view>
+
+    <!-- 服务菜单 -->
+    <view class="menu-section fade-in">
+      <view class="menu-title">我的服务</view>
+      <view class="menu-card">
+        <view class="menu-item" bindtap="openOrders">
+          <view class="menu-icon icon-order"></view>
+          <view class="menu-text">我的订单</view>
+          <view class="menu-arrow">></view>
+        </view>
+        <view class="menu-item" bindtap="openTickets">
+          <view class="menu-icon icon-ticket"></view>
+          <view class="menu-text">购票预约</view>
+          <view class="menu-arrow">></view>
+        </view>
+        <view class="menu-item" bindtap="openCards">
+          <view class="menu-icon icon-card"></view>
+          <view class="menu-text">卡种中心</view>
+          <view class="menu-arrow">></view>
+        </view>
+        <view class="menu-item" bindtap="openPets">
+          <view class="menu-icon icon-pet"></view>
+          <view class="menu-text">我的宠物</view>
+          <view class="menu-arrow">></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 账号信息 -->
+    <view class="menu-section fade-in">
+      <view class="menu-title">账号信息</view>
+      <view class="menu-card">
+        <view class="info-row">
+          <view class="info-label">手机号</view>
+          <view class="info-value">{{phone}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">人脸录入</view>
+          <view class="info-value">{{faceStatus}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">所属门店</view>
+          <view class="info-value">{{storeName}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="version fade-in">萌宠乐园 v1.0.0</view>
+  </block>
+</view>

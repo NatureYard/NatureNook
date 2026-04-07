@@ -1,8 +1,80 @@
 <view class="page">
-  <view wx:for="{{orders}}" wx:key="no" class="card">
-    <view class="name">{{item.type}}</view>
-    <view class="desc">{{item.no}}</view>
-    <view class="status">{{item.status}}</view>
-    <view class="status">金额：¥{{item.amount}}</view>
+  <view class="page-header">
+    <view id="orders-page-title" class="page-title">我的订单</view>
+    <view class="page-subtitle">查看预约记录与入园凭证</view>
+  </view>
+
+  <!-- Tab 筛选 -->
+  <view class="tab-bar" wx:if="{{!loading && !error}}">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab-item {{activeTab === item.key ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="switchTab"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:160rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:160rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:160rpx;"></view>
+  </view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">订单加载失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <!-- 订单列表 -->
+  <block wx:elif="{{orders.length}}">
+    <view
+      wx:for="{{orders}}"
+      wx:key="no"
+      id="order-card-{{index}}"
+      class="order-card {{item.isToday ? 'today' : ''}} fade-in"
+    >
+      <!-- 今日标记 -->
+      <view wx:if="{{item.canUse}}" class="order-badge">今日可用</view>
+
+      <view class="order-top">
+        <view id="order-type-{{index}}" class="order-type">{{item.type}}</view>
+        <view class="status-pill {{item.statusClass}}">{{item.status}}</view>
+      </view>
+
+      <view id="order-no-{{index}}" class="order-no">{{item.no}}</view>
+
+      <view class="order-detail-row" wx:if="{{item.reservationInfo}}">
+        <text class="order-detail-label">预约</text>
+        <text class="order-detail-value">
+          <text wx:if="{{item.dateFriendly}}">{{item.dateFriendly}} </text>{{item.reservationInfo}}
+        </text>
+      </view>
+
+      <view class="order-detail-row">
+        <text class="order-detail-label">门店</text>
+        <text class="order-detail-value">{{item.storeName}}</text>
+      </view>
+
+      <view class="order-footer">
+        <view class="order-amount">¥{{item.amount}}</view>
+        <view wx:if="{{item.needPay}}" class="order-pay-btn" data-orderno="{{item.no}}" bindtap="payOrder">立即支付</view>
+        <view wx:elif="{{item.canUse}}" class="order-pass-btn">入园凭证</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空列表 -->
+  <view wx:else class="empty-card">
+    <view class="state-title">
+      {{activeTab === 'all' ? '还没有订单记录' : '暂无相关订单'}}
+    </view>
+    <view class="state-desc">
+      {{activeTab === 'all' ? '可以先去预约门票、寄养或洗护服务。' : '切换到其他分类查看更多订单。'}}
+    </view>
+    <button wx:if="{{activeTab === 'all'}}" id="orders-open-tickets" class="ghost-btn" bindtap="openTickets">去预约</button>
   </view>
 </view>

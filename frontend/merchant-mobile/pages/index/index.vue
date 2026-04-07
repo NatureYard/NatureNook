@@ -5,7 +5,7 @@
       <view class="desc">门店现场作业入口，覆盖核销、寄养、美容、物资和风险处理。</view>
     </view>
     <view class="grid">
-      <view v-for="item in items" :key="item.title" class="item">
+      <view v-for="item in items" :key="item.title" class="item" @click="navigate(item.path)">
         <view class="item-title">{{ item.title }}</view>
         <view class="item-desc">{{ item.desc }}</view>
         <view class="item-count">{{ item.count }}</view>
@@ -16,28 +16,35 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { BASE_URL } from '../../config.js'
 
 const items = ref([
-  { title: '现场核销', desc: '订单核验、闸机异常、人工放行', count: 0 },
-  { title: '寄养履约', desc: '入住、喂养记录、异常上报', count: 0 },
-  { title: '物资管理', desc: '领用、盘点、报损、补货提醒', count: 0 },
-  { title: '待复核异常', desc: '风险事件与人工放行复核', count: 0 },
+  { title: '现场核销', desc: '订单核验、闸机异常、人工放行', count: 0, path: '/pages/checkin/index' },
+  { title: '寄养履约', desc: '入住、喂养记录、异常上报', count: 0, path: '/pages/boarding/index' },
+  { title: '美容洗护', desc: '接单、完工记录、耗材消耗', count: 0, path: '/pages/grooming/index' },
+  { title: '物资管理', desc: '领用、盘点、报损、补货提醒', count: 0, path: '/pages/materials/index' },
+  { title: '待办工单', desc: '风险事件与人工放行复核', count: 0, path: '/pages/tasks/index' },
 ])
 
 onMounted(() => {
   uni.request({
-    url: 'http://localhost:8080/api/m-app/task-board',
+    url: `${BASE_URL}/api/m-app/task-board`,
     success: (res) => {
       const rows = res.data?.data || []
       items.value = [
-        { title: '现场核销', desc: '订单核验、闸机异常、人工放行', count: rows.find((x) => x.type === 'CHECKIN')?.count || 0 },
-        { title: '寄养履约', desc: '入住、喂养记录、异常上报', count: rows.find((x) => x.type === 'BOARDING')?.count || 0 },
-        { title: '物资管理', desc: '领用、盘点、报损、补货提醒', count: rows.find((x) => x.type === 'MATERIAL')?.count || 0 },
-        { title: '待复核异常', desc: '风险事件与人工放行复核', count: rows.find((x) => x.type === 'RISK')?.count || 0 },
+        { title: '现场核销', desc: '订单核验、闸机异常、人工放行', count: rows.find((x) => x.type === 'CHECKIN')?.count || 0, path: '/pages/checkin/index' },
+        { title: '寄养履约', desc: '入住、喂养记录、异常上报', count: rows.find((x) => x.type === 'BOARDING')?.count || 0, path: '/pages/boarding/index' },
+        { title: '美容洗护', desc: '接单、完工记录、耗材消耗', count: 0, path: '/pages/grooming/index' },
+        { title: '物资管理', desc: '领用、盘点、报损、补货提醒', count: rows.find((x) => x.type === 'MATERIAL')?.count || 0, path: '/pages/materials/index' },
+        { title: '待办工单', desc: '风险事件与人工放行复核', count: rows.find((x) => x.type === 'RISK')?.count || 0, path: '/pages/tasks/index' },
       ]
     },
   })
 })
+
+function navigate(path) {
+  uni.navigateTo({ url: path })
+}
 </script>
 
 <style scoped>
@@ -47,7 +54,7 @@ onMounted(() => {
 
 .panel,
 .item {
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 20rpx;
   padding: 24rpx;
 }
@@ -59,7 +66,7 @@ onMounted(() => {
 
 .desc {
   margin-top: 12rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 
 .grid {
@@ -76,13 +83,13 @@ onMounted(() => {
 
 .item-desc {
   margin-top: 10rpx;
-  color: #4b5563;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .item-count {
   margin-top: 12rpx;
-  color: #0f766e;
+  color: var(--brand-secondary);
   font-size: 34rpx;
   font-weight: 700;
 }

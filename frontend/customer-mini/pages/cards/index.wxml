@@ -1,8 +1,69 @@
 <view class="page">
-  <view wx:for="{{cards}}" wx:key="name" class="card">
-    <view class="name">{{item.name}}</view>
-    <view class="desc">{{item.desc}}</view>
-    <view class="price">¥{{item.price}}</view>
+  <view class="page-header">
+    <view id="cards-page-title" class="page-title">卡种中心</view>
+    <view class="page-subtitle">查看会员卡权益与有效期</view>
+  </view>
+
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:280rpx;"></view>
+  </view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">卡种加载失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <!-- 卡种列表 -->
+  <block wx:elif="{{cards.length}}">
+    <view wx:for="{{cards}}" wx:key="id" id="membership-card-{{index}}" class="card-item fade-in">
+      <!-- 卡头 -->
+      <view class="card-hero {{item.statusClass}}">
+        <view class="card-hero-top">
+          <view id="membership-card-name-{{index}}" class="card-name">{{item.name}}</view>
+          <view id="membership-card-status-{{index}}" class="card-status">{{item.status}}</view>
+        </view>
+        <view class="card-price-row">
+          <text class="card-price-unit">¥</text>
+          <text id="membership-card-price-{{index}}" class="card-price-value">{{item.price}}</text>
+        </view>
+      </view>
+
+      <!-- 卡身 -->
+      <view class="card-body">
+        <view class="card-desc">{{item.desc}}</view>
+
+        <!-- 有效期进度 -->
+        <view class="card-validity">
+          <view class="validity-row">
+            <text class="validity-label">{{item.meta}}</text>
+            <text class="validity-remaining {{item.isExpiringSoon ? 'warning' : ''}}">{{item.remaining}}</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill {{item.isExpiringSoon ? 'warning' : ''}}" style="width:{{item.progress}}%;"></view>
+          </view>
+        </view>
+
+        <!-- 权益列表 -->
+        <view wx:if="{{item.benefits.length}}" class="benefits">
+          <view class="benefits-title">卡种权益</view>
+          <view class="benefits-list">
+            <view wx:for="{{item.benefits}}" wx:for-item="benefit" wx:key="*this" class="benefit-item">
+              <view class="benefit-dot"></view>
+              <text>{{benefit}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空 -->
+  <view wx:else class="empty-card">
+    <view class="state-title">当前没有会员卡</view>
+    <view class="state-desc">预约服务时可了解和开通各类会员卡，享受更多权益。</view>
+    <button class="ghost-btn" bindtap="openTickets">去预约</button>
   </view>
 </view>
-

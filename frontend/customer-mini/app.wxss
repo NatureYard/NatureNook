@@ -1,5 +1,170 @@
 page {
   background: #f6fbfa;
   color: #1f2937;
+  font-size: 28rpx;
+  line-height: 1.6;
 }
 
+button::after {
+  border: none;
+}
+
+/* ── 通用状态卡片 ── */
+
+.state-card,
+.empty-card {
+  padding: 56rpx 32rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  color: #64748b;
+  text-align: center;
+  box-shadow: 0 14rpx 40rpx rgba(15, 23, 42, 0.04);
+}
+
+.state-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.state-desc {
+  margin-top: 12rpx;
+  line-height: 1.7;
+}
+
+.state-btn,
+.ghost-btn {
+  margin-top: 24rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+}
+
+.state-btn {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.ghost-btn {
+  background: #e7f7f2;
+  color: #0f766e;
+}
+
+/* ── 状态标签 ── */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.status-pill.active,
+.status-pill.paid {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.status-pill.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-pill.inactive {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.hint-text {
+  margin-top: 12rpx;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* ── 骨架屏加载动画 ── */
+
+@keyframes shimmer {
+  0% { background-position: -400rpx 0; }
+  100% { background-position: 400rpx 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800rpx 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12rpx;
+}
+
+.skeleton-line {
+  height: 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+.skeleton-line.medium {
+  width: 80%;
+}
+
+.skeleton-block {
+  height: 160rpx;
+  margin-bottom: 16rpx;
+}
+
+/* ── 通用页面结构 ── */
+
+.page-header {
+  padding: 8rpx 0 24rpx;
+}
+
+.page-title {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.page-subtitle {
+  margin-top: 8rpx;
+  color: #94a3b8;
+  font-size: 26rpx;
+}
+
+/* ── 通用卡片 ── */
+
+.base-card {
+  margin-bottom: 16rpx;
+  padding: 28rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  box-shadow: 0 14rpx 40rpx rgba(15, 23, 42, 0.04);
+}
+
+/* ── 分割线 ── */
+
+.divider {
+  height: 1rpx;
+  background: #f1f5f9;
+  margin: 20rpx 0;
+}
+
+/* ── 淡入动画 ── */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.3s ease-out both;
+}

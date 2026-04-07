@@ -1,7 +1,54 @@
 <view class="page">
-  <view wx:for="{{pets}}" wx:key="name" class="card">
-    <view class="name">{{item.name}}</view>
-    <view class="desc">{{item.meta}}</view>
+  <view class="page-header">
+    <view class="page-title">我的宠物</view>
+    <view class="page-subtitle">查看宠物档案信息</view>
+  </view>
+
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:200rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:200rpx;"></view>
+  </view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">宠物档案加载失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <!-- 宠物列表 -->
+  <block wx:elif="{{pets.length}}">
+    <view wx:for="{{pets}}" wx:key="id" class="pet-card fade-in">
+      <view class="pet-header">
+        <view class="pet-avatar">{{item.avatar}}</view>
+        <view class="pet-main">
+          <view class="pet-name-row">
+            <view class="pet-name">{{item.name}}</view>
+            <view class="pet-gender {{item.genderClass}}">{{item.gender}}</view>
+          </view>
+          <view class="pet-breed">{{item.species}} · {{item.breed}}</view>
+        </view>
+      </view>
+
+      <view class="pet-info-grid">
+        <view class="info-block">
+          <view class="info-label">体重</view>
+          <view class="info-value">{{item.weight}}</view>
+        </view>
+        <view class="info-block">
+          <view class="info-label">疫苗</view>
+          <view class="info-value {{item.vaccinated ? 'good' : 'warn'}}">
+            {{item.vaccinated ? '已接种' : '未接种'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空 -->
+  <view wx:else class="empty-card">
+    <view class="state-title">暂无宠物档案</view>
+    <view class="state-desc">当前会员还没有绑定宠物信息，请联系门店工作人员添加。</view>
   </view>
 </view>
-

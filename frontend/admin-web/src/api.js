@@ -9,6 +9,19 @@ async function request(path) {
   return payload.data
 }
 
+async function post(path, body) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const result = await response.json()
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || `HTTP ${response.status}`)
+  }
+  return result.data
+}
+
 export function fetchDashboardSummary() {
   return request('/api/admin/dashboard/summary')
 }
@@ -37,15 +50,35 @@ export function fetchCards() {
   return request('/api/admin/cards')
 }
 
-export async function createMember(payload) {
-  const response = await fetch(`${API_BASE}/api/admin/members`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
-  const result = await response.json()
-  if (!response.ok || !result.success) {
-    throw new Error(result.message || `HTTP ${response.status}`)
-  }
-  return result.data
+export function fetchBoardingOrders() {
+  return request('/api/admin/boarding/orders')
 }
+
+export function fetchGroomingOrders() {
+  return request('/api/admin/grooming/orders')
+}
+
+export function fetchRiskEvents() {
+  return request('/api/admin/risks/events')
+}
+
+export function fetchReservations() {
+  return request('/api/admin/reservations')
+}
+
+export async function createMember(payload) {
+  return post('/api/admin/members', payload)
+}
+
+export async function createBoardingOrder(payload) {
+  return post('/api/admin/boarding/orders', payload)
+}
+
+export async function createGroomingOrder(payload) {
+  return post('/api/admin/grooming/orders', payload)
+}
+
+export async function createReservation(payload) {
+  return post('/api/admin/reservations', payload)
+}
+

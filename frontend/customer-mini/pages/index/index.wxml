@@ -1,20 +1,113 @@
 <view class="page">
-  <view class="hero">
-    <view class="title">萌宠乐园消费者小程序</view>
-    <view class="subtitle">购票、预约、卡种、宠物档案和入园凭证统一入口</view>
-  </view>
-
-  <view class="section">
-    <view class="section-title">活动横幅</view>
-    <view wx:for="{{banners}}" wx:key="*this" class="banner-item">{{item}}</view>
-  </view>
-
-  <view class="section">
-    <view class="section-title">快捷入口</view>
-    <view class="quick-grid">
-      <view wx:for="{{quickEntries}}" wx:key="*this" class="module-item">{{item}}</view>
+  <!-- 加载骨架 -->
+  <view wx:if="{{loading}}" class="skeleton-wrap">
+    <view class="skeleton skeleton-block" style="height:280rpx;border-radius:32rpx;"></view>
+    <view class="skeleton skeleton-block" style="height:120rpx;margin-top:24rpx;"></view>
+    <view style="display:flex;gap:16rpx;margin-top:24rpx;">
+      <view class="skeleton skeleton-block" style="flex:1;height:160rpx;"></view>
+      <view class="skeleton skeleton-block" style="flex:1;height:160rpx;"></view>
     </view>
   </view>
 
-  <view class="tip-card">{{activeCardTip}}</view>
+  <!-- 错误状态 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">首页暂时不可用</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <!-- 会员 Hero 卡片 -->
+    <view class="hero fade-in">
+      <view class="hero-top">
+        <view class="hero-info">
+          <view id="home-member-name" class="hero-name">{{memberName}}</view>
+          <view class="hero-meta">{{memberLevel}} · {{storeName}}</view>
+        </view>
+        <view id="home-open-profile" class="hero-action" bindtap="openProfile">个人中心</view>
+      </view>
+
+      <view class="hero-stats">
+        <view id="home-open-orders" class="hero-stat" bindtap="openOrders">
+          <view class="hero-stat-value">{{orderCount}}</view>
+          <view class="hero-stat-label">我的订单</view>
+        </view>
+        <view class="hero-stat" bindtap="openPets">
+          <view class="hero-stat-value">{{petCount}}</view>
+          <view class="hero-stat-label">宠物档案</view>
+        </view>
+        <view id="home-open-cards" class="hero-stat" bindtap="openCards">
+          <view class="hero-stat-value">{{cardCount}}</view>
+          <view class="hero-stat-label">活跃卡种</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 今日入园提示 -->
+    <view wx:if="{{todayPass}}" class="today-pass fade-in" bindtap="openOrders">
+      <view class="today-pass-dot"></view>
+      <view class="today-pass-text">{{todayPass}}</view>
+      <view class="today-pass-arrow">查看</view>
+    </view>
+
+    <!-- 活动轮播 -->
+    <view wx:if="{{banners.length}}" class="section fade-in">
+      <view class="section-head">
+        <view class="section-title">园区活动</view>
+      </view>
+      <swiper
+        class="banner-swiper"
+        indicator-dots="{{false}}"
+        autoplay="{{true}}"
+        interval="{{4000}}"
+        circular="{{true}}"
+        current="{{swiperCurrent}}"
+        bindchange="onSwiperChange"
+      >
+        <swiper-item wx:for="{{banners}}" wx:key="title">
+          <view class="banner-card">
+            <view class="banner-tag">{{item.tag}}</view>
+            <view class="banner-title">{{item.title}}</view>
+            <view class="banner-subtitle">{{item.subtitle}}</view>
+          </view>
+        </swiper-item>
+      </swiper>
+      <view class="swiper-dots">
+        <view
+          wx:for="{{banners}}"
+          wx:key="title"
+          class="swiper-dot {{swiperCurrent === index ? 'active' : ''}}"
+        ></view>
+      </view>
+    </view>
+
+    <!-- 快捷入口 -->
+    <view class="section fade-in">
+      <view class="section-title">快捷入口</view>
+      <view class="quick-grid">
+        <view
+          wx:for="{{quickEntries}}"
+          wx:key="label"
+          class="entry-item"
+          data-path="{{item.path}}"
+          bindtap="openEntry"
+        >
+          <view class="entry-icon entry-icon--{{item.icon}}"></view>
+          <view class="entry-label">{{item.label}}</view>
+          <view class="entry-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提示 -->
+    <view wx:if="{{activeCardTip}}" class="tip-card fade-in">
+      <view class="tip-label">会员提示</view>
+      <view class="tip-text">{{activeCardTip}}</view>
+    </view>
+
+    <!-- 快速预约入口 -->
+    <view id="home-open-tickets" class="fab fade-in" bindtap="openTickets">
+      <view class="fab-text">预约</view>
+    </view>
+  </block>
 </view>

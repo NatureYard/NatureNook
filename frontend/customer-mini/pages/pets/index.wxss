@@ -2,20 +2,115 @@
   padding: 24rpx;
 }
 
-.card {
+.skeleton-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+/* ── 宠物卡片 ── */
+
+.pet-card {
   margin-bottom: 16rpx;
-  padding: 28rpx;
-  border-radius: 20rpx;
+  border-radius: 24rpx;
   background: #ffffff;
+  box-shadow: 0 14rpx 40rpx rgba(15, 23, 42, 0.04);
+  overflow: hidden;
 }
 
-.name {
-  font-size: 32rpx;
+.pet-header {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+}
+
+.pet-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+  color: #0f766e;
+  font-size: 38rpx;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
-.desc {
-  margin-top: 10rpx;
-  color: #6b7280;
+.pet-main {
+  margin-left: 22rpx;
+  flex: 1;
 }
 
+.pet-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.pet-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pet-gender {
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.pet-gender.male {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.pet-gender.female {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.pet-breed {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #94a3b8;
+}
+
+/* ── 信息网格 ── */
+
+.pet-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1rpx solid #f1f5f9;
+}
+
+.info-block {
+  padding: 20rpx 28rpx;
+  border-right: 1rpx solid #f1f5f9;
+}
+
+.info-block:last-child {
+  border-right: none;
+}
+
+.info-label {
+  font-size: 22rpx;
+  color: #94a3b8;
+  margin-bottom: 6rpx;
+}
+
+.info-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.info-value.good {
+  color: #0f766e;
+}
+
+.info-value.warn {
+  color: #dc2626;
+}
