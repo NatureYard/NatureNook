@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ssh tl:*)"
+      "Bash(ssh tl:*)",
+      "Bash(grep:*)",
+      "Bash(ls /home/andy/Projects/mcly/backend/src/main/resources/*.sql)",
+      "Bash(ls /home/andy/Projects/mcly/backend/src/main/resources/db/*.sql)",
+      "Bash(./gradlew test:*)",
+      "Bash(java -version)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
