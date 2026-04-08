@@ -3,6 +3,7 @@ package com.mcly.device.web;
 import com.mcly.common.api.ApiResponse;
 import com.mcly.device.api.GateEventReportRequest;
 import com.mcly.device.api.GateHeartbeatRequest;
+import com.mcly.device.api.GateVerifyQrRequest;
 import com.mcly.device.api.GateVerifyRequest;
 import com.mcly.device.api.GateVerifyResponse;
 import com.mcly.device.service.GateDeviceService;
@@ -25,6 +26,11 @@ public class GateDeviceController {
     @PostMapping("/verify-pass")
     public ApiResponse<GateVerifyResponse> verifyPass(@Valid @RequestBody GateVerifyRequest request) {
         return ApiResponse.ok(gateDeviceService.verifyPass(request));
+    }
+
+    @PostMapping("/verify-qr")
+    public ApiResponse<GateVerifyResponse> verifyQrPass(@Valid @RequestBody GateVerifyQrRequest request) {
+        return ApiResponse.ok(gateDeviceService.verifyQrPass(request));
     }
 
     @PostMapping("/report-event")

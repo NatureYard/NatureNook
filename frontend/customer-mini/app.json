@@ -5,7 +5,8 @@
     "pages/cards/index",
     "pages/pets/index",
     "pages/orders/index",
-    "pages/profile/index"
+    "pages/profile/index",
+    "pages/pass-qr/index"
   ],
   "tabBar": {
     "color": "#5b6470",

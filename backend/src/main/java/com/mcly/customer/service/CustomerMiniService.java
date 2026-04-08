@@ -12,9 +12,15 @@ import com.mcly.customer.api.CustomerProfileResponse;
 import com.mcly.customer.api.CustomerTicketResponse;
 import com.mcly.customer.api.PrepayResponse;
 import com.mcly.customer.repository.CustomerMiniQueryRepository;
+import com.mcly.common.auth.AuthContext;
+import com.mcly.entrytoken.api.QrCodeGenerateResponse;
+import com.mcly.entrytoken.api.RiskReportRequest;
+import com.mcly.entrytoken.api.RiskReportResponse;
+import com.mcly.entrytoken.service.EntryTokenService;
 import com.mcly.order.repository.CustomerOrderCommandRepository;
 import com.mcly.order.repository.ReservationCommandRepository;
 import com.mcly.pass.repository.PassEntitlementCommandRepository;
+import com.mcly.risk.repository.RiskEventCommandRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -36,6 +42,8 @@ public class CustomerMiniService {
     private final ReservationCommandRepository reservationCommandRepository;
     private final CustomerOrderCommandRepository customerOrderCommandRepository;
     private final PassEntitlementCommandRepository passEntitlementCommandRepository;
+    private final EntryTokenService entryTokenService;
+    private final RiskEventCommandRepository riskEventCommandRepository;
     private final JdbcTemplate jdbcTemplate;
 
     public CustomerMiniService(
@@ -43,12 +51,16 @@ public class CustomerMiniService {
             ReservationCommandRepository reservationCommandRepository,
             CustomerOrderCommandRepository customerOrderCommandRepository,
             PassEntitlementCommandRepository passEntitlementCommandRepository,
+            EntryTokenService entryTokenService,
+            RiskEventCommandRepository riskEventCommandRepository,
             JdbcTemplate jdbcTemplate
     ) {
         this.customerMiniQueryRepository = customerMiniQueryRepository;
         this.reservationCommandRepository = reservationCommandRepository;
         this.customerOrderCommandRepository = customerOrderCommandRepository;
         this.passEntitlementCommandRepository = passEntitlementCommandRepository;
+        this.entryTokenService = entryTokenService;
+        this.riskEventCommandRepository = riskEventCommandRepository;
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -280,6 +292,44 @@ public class CustomerMiniService {
         log.info("订单 {} 支付确认完成，已生成通行资格", orderNo);
     }
 
+    /**
+     * 为当前会员的通行资格生成入园二维码。
+     */
+    public QrCodeGenerateResponse generateQrCode(Long passEntitlementId) {
+        Long memberId = resolveCurrentMemberId();
+        return entryTokenService.generateQrCode(passEntitlementId, memberId);
+    }
+
+    /**
+     * 会员举报非本人入园操作。
+     */
+    @Transactional
+    public RiskReportResponse reportUnauthorizedEntry(RiskReportRequest request) {
+        Long memberId = resolveCurrentMemberId();
+
+        // 验证通行资格属于当前会员
+        var entitlement = jdbcTemplate.queryForList(
+                "select id, store_id from pass_entitlement where id = ? and member_id = ?",
+                request.passEntitlementId(), memberId);
+        if (entitlement.isEmpty()) {
+            throw new IllegalArgumentException("通行资格不存在或不属于当前会员");
+        }
+
+        Long storeId = ((Number) entitlement.get(0).get("store_id")).longValue();
+
+        // 创建高风险事件
+        String content = String.format("{\"memberReported\":true,\"passEntitlementId\":%d,\"reason\":\"%s\"}",
+                request.passEntitlementId(),
+                request.reason() != null ? request.reason().replace("\"", "'") : "非本人操作");
+
+        Long riskEventId = riskEventCommandRepository.createWithContent(
+                storeId, "UNAUTHORIZED_ENTRY_REPORT", "HIGH", "MEMBER", memberId, content);
+
+        log.info("会员 {} 举报非本人入园，风控事件 ID: {}", memberId, riskEventId);
+
+        return new RiskReportResponse(riskEventId, "已收到举报，工作人员将尽快核实处理。");
+    }
+
     private static final List<TicketCatalogItem> TICKET_CATALOG = List.of(
             new TicketCatalogItem("DAY_TICKET", "单次门票", "支持当日多次出入", "TICKET", new BigDecimal("68.00")),
             new TicketCatalogItem("GROOMING_PACKAGE", "洗护套餐", "含基础洗护与护理", "GROOMING", new BigDecimal("128.00")),
@@ -304,5 +354,17 @@ public class CustomerMiniService {
             String status,
             BigDecimal payableAmount
     ) {
+    }
+
+    /**
+     * 获取当前会员 ID。优先从 AuthContext 取，降级取第一个会员（开发兼容）。
+     */
+    private Long resolveCurrentMemberId() {
+        Long memberId = AuthContext.getMemberId();
+        if (memberId != null) {
+            return memberId;
+        }
+        // 开发兼容降级
+        return jdbcTemplate.queryForObject("select min(id) from member", Long.class);
     }
 }

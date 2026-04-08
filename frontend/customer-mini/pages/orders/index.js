@@ -50,6 +50,7 @@ Page({
             isToday: isToday,
             canUse: (item.status === 'PAID' || item.status === 'BOOKED') && isToday,
             needPay: item.status === 'PENDING_PAY',
+            passEntitlementId: item.passEntitlementId || null,
           }
         })
 
@@ -107,6 +108,15 @@ Page({
 
   openTickets: function () {
     wx.switchTab({ url: '/pages/tickets/index' })
+  },
+
+  openPassQr: function (event) {
+    var passId = event.currentTarget.dataset.passid
+    if (!passId) {
+      wx.showToast({ title: '凭证信息异常', icon: 'none' })
+      return
+    }
+    wx.navigateTo({ url: '/pages/pass-qr/index?passEntitlementId=' + passId })
   },
 
   payOrder: function (event) {

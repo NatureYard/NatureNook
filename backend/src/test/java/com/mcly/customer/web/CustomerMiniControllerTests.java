@@ -187,4 +187,56 @@ class CustomerMiniControllerTests {
                 .andExpect(jsonPath("$.data.memberId").exists())
                 .andExpect(jsonPath("$.data.memberName").exists());
     }
+
+    @Test
+    @Transactional
+    void shouldGenerateQrCodeForActivePass() throws Exception {
+        mockMvc.perform(get("/api/c-app/entry-token?passEntitlementId=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.qrContent").exists())
+                .andExpect(jsonPath("$.data.expiresAt").exists())
+                .andExpect(jsonPath("$.data.passEntitlementId").value(1))
+                .andExpect(jsonPath("$.data.passName").value("单次门票入园资格"))
+                .andExpect(jsonPath("$.data.storeName").value("上海萌宠乐园旗舰店"));
+
+        // 验证 entry_token 已创建
+        Integer tokenCount = jdbcTemplate.queryForObject(
+                "select count(*) from entry_token where pass_entitlement_id = 1 and status = 'ACTIVE'",
+                Integer.class);
+        assertThat(tokenCount).isGreaterThan(0);
+    }
+
+    @Test
+    @Transactional
+    void shouldRejectQrGenerationWhenAlreadyInPark() throws Exception {
+        // 模拟已入园
+        jdbcTemplate.update("""
+                insert into entry_exit_record (member_id, store_id, gate_device_id, direction, result, risk_flag)
+                values (1, 1, 1, 'ENTRY', 'PASSED', false)
+                """);
+
+        mockMvc.perform(get("/api/c-app/entry-token?passEntitlementId=1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("您当前已在园内，请先出园后再生成新的入园凭证"));
+    }
+
+    @Test
+    @Transactional
+    void shouldReportUnauthorizedEntry() throws Exception {
+        mockMvc.perform(post("/api/c-app/report-unauthorized-entry")
+                        .contentType("application/json")
+                        .content("{\"passEntitlementId\": 1, \"reason\": \"不是本人操作\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.riskEventId").exists())
+                .andExpect(jsonPath("$.data.message").exists());
+
+        // 验证风控事件已创建
+        Integer riskCount = jdbcTemplate.queryForObject(
+                "select count(*) from risk_event where event_type = 'UNAUTHORIZED_ENTRY_REPORT'",
+                Integer.class);
+        assertThat(riskCount).isGreaterThan(0);
+    }
 }

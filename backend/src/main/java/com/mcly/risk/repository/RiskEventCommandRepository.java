@@ -48,4 +48,41 @@ public class RiskEventCommandRepository {
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
+
+    /**
+     * 创建带 content 的风险事件，返回自增 ID。
+     */
+    public Long createWithContent(
+            Long storeId,
+            String eventType,
+            String eventLevel,
+            String subjectType,
+            Long subjectId,
+            String content
+    ) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement statement = connection.prepareStatement("""
+                    insert into risk_event (
+                        store_id, event_type, event_level, subject_type, subject_id, content, status
+                    ) values (?, ?, ?, ?, ?, ?::jsonb, 'OPEN')
+                    """, new String[]{"id"});
+            if (storeId == null) {
+                statement.setNull(1, Types.BIGINT);
+            } else {
+                statement.setLong(1, storeId);
+            }
+            statement.setString(2, eventType);
+            statement.setString(3, eventLevel);
+            statement.setString(4, subjectType);
+            if (subjectId == null) {
+                statement.setNull(5, Types.BIGINT);
+            } else {
+                statement.setLong(5, subjectId);
+            }
+            statement.setString(6, content);
+            return statement;
+        }, keyHolder);
+        return keyHolder.getKey().longValue();
+    }
 }

@@ -8,6 +8,7 @@ public record CustomerOrderResponse(
         String amount,
         String storeName,
         String reservationDate,
-        String timeSlot
+        String timeSlot,
+        Long passEntitlementId
 ) {
 }

@@ -46,3 +46,4 @@ alter table customer_order alter column id restart with 3;
 alter table pass_entitlement alter column id restart with 2;
 alter table manual_release_record alter column id restart with 1;
 alter table risk_event alter column id restart with 1;
+alter table entry_token alter column id restart with 1;

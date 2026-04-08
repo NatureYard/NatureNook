@@ -95,6 +95,37 @@ function confirmPayment(orderNo) {
   })
 }
 
+/**
+ * 确认支付完成（开发模式用，正式环境由微信回调触发）。
+ */
+function confirmPayment(orderNo) {
+  return withFallback(function () {
+    return req.request('/api/c-app/payment/confirm', {
+      method: 'POST',
+      data: { orderNo: orderNo },
+    })
+  }, function () {
+    return mock.confirmMockPayment(orderNo)
+  })
+}
+
+/**
+ * 生成入园二维码凭证。
+ */
+function generateQrCode(passEntitlementId) {
+  return req.request('/api/c-app/entry-token?passEntitlementId=' + passEntitlementId)
+}
+
+/**
+ * 举报非本人入园操作。
+ */
+function reportUnauthorizedEntry(passEntitlementId, reason) {
+  return req.request('/api/c-app/report-unauthorized-entry', {
+    method: 'POST',
+    data: { passEntitlementId: passEntitlementId, reason: reason },
+  })
+}
+
 module.exports = {
   confirmPayment: confirmPayment,
   createReservation: createReservation,
@@ -105,5 +136,7 @@ module.exports = {
   fetchPets: fetchPets,
   fetchProfile: fetchProfile,
   fetchTickets: fetchTickets,
+  generateQrCode: generateQrCode,
   prepay: prepay,
+  reportUnauthorizedEntry: reportUnauthorizedEntry,
 }

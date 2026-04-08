@@ -34,4 +34,16 @@ public class GateDeviceQueryRepository extends QuerySupport {
                 """, Integer.class, memberId);
         return count != null && count > 0;
     }
+
+    /**
+     * 查询会员最新一条 entry_exit_record 的 ID。
+     */
+    public Long findLatestEntryExitId(Long memberId, Long storeId) {
+        var rows = jdbcTemplate.queryForList("""
+                select id from entry_exit_record
+                where member_id = ? and store_id = ?
+                order by occurred_at desc limit 1
+                """, memberId, storeId);
+        return rows.isEmpty() ? null : ((Number) rows.get(0).get("id")).longValue();
+    }
 }

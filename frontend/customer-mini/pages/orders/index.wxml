@@ -62,7 +62,7 @@
       <view class="order-footer">
         <view class="order-amount">¥{{item.amount}}</view>
         <view wx:if="{{item.needPay}}" class="order-pay-btn" data-orderno="{{item.no}}" bindtap="payOrder">立即支付</view>
-        <view wx:elif="{{item.canUse}}" class="order-pass-btn">入园凭证</view>
+        <view wx:elif="{{item.canUse}}" class="order-pass-btn" data-passid="{{item.passEntitlementId}}" bindtap="openPassQr">入园凭证</view>
       </view>
     </view>
   </block>

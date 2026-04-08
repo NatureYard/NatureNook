@@ -97,10 +97,13 @@ public class CustomerMiniQueryRepository extends QuerySupport {
                        co.paid_amount,
                        s.name as store_name,
                        to_char(r.reservation_date, 'YYYY-MM-DD') as reservation_date,
-                       coalesce(r.time_slot, '') as time_slot
+                       coalesce(r.time_slot, '') as time_slot,
+                       pe.id as pass_entitlement_id
                 from customer_order co
                 join store s on s.id = co.store_id
                 left join reservation r on r.id = co.reservation_id
+                left join pass_entitlement pe on pe.source_type in ('DAY_TICKET','GROOMING_PACKAGE','BOARDING_DAY')
+                     and pe.source_id = r.id and pe.member_id = co.member_id
                 where co.member_id = ?
                 order by co.id desc
                 """, (rs, rowNum) -> new CustomerOrderResponse(
@@ -111,7 +114,8 @@ public class CustomerMiniQueryRepository extends QuerySupport {
                 rs.getBigDecimal("paid_amount").toPlainString(),
                 rs.getString("store_name"),
                 rs.getString("reservation_date"),
-                rs.getString("time_slot")
+                rs.getString("time_slot"),
+                rs.getObject("pass_entitlement_id", Long.class)
         ), memberId);
     }
 

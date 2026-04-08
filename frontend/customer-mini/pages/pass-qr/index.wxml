@@ -1,0 +1,45 @@
+<view class="page">
+  <!-- 加载中 -->
+  <view wx:if="{{loading && !qrContent}}" class="state-card">
+    <view class="state-title">正在生成入园凭证...</view>
+  </view>
+
+  <!-- 错误 -->
+  <view wx:elif="{{error}}" class="state-card">
+    <view class="state-title">凭证生成失败</view>
+    <view class="state-desc">{{error}}</view>
+    <button class="state-btn" bindtap="retry">重新生成</button>
+  </view>
+
+  <!-- 二维码展示 -->
+  <block wx:else>
+    <!-- 凭证信息卡片 -->
+    <view class="info-card">
+      <view class="info-row">
+        <text class="info-label">凭证类型</text>
+        <text class="info-value">{{passName}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">门店</text>
+        <text class="info-value">{{storeName}}</text>
+      </view>
+    </view>
+
+    <!-- 二维码区域 -->
+    <view class="qr-card">
+      <view class="qr-hint">请将二维码对准闸机扫描口</view>
+      <canvas canvas-id="qrCanvas" class="qr-canvas"></canvas>
+      <view wx:if="{{countdown > 0}}" class="qr-refresh">
+        <text class="refresh-text">{{countdown}} 秒后自动刷新</text>
+      </view>
+      <view wx:if="{{loading}}" class="qr-overlay">
+        <text class="refresh-text">刷新中...</text>
+      </view>
+    </view>
+
+    <!-- 举报入口 -->
+    <view class="report-area">
+      <text class="report-link" bindtap="reportUnauthorized">非本人操作？点击举报</text>
+    </view>
+  </block>
+</view>

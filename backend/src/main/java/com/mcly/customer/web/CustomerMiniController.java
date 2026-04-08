@@ -14,12 +14,16 @@ import com.mcly.customer.api.CustomerTicketResponse;
 import com.mcly.customer.api.PrepayRequest;
 import com.mcly.customer.api.PrepayResponse;
 import com.mcly.customer.service.CustomerMiniService;
+import com.mcly.entrytoken.api.QrCodeGenerateResponse;
+import com.mcly.entrytoken.api.RiskReportRequest;
+import com.mcly.entrytoken.api.RiskReportResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -96,5 +100,25 @@ public class CustomerMiniController {
     public ApiResponse<Void> confirmPayment(@RequestBody PrepayRequest request) {
         customerMiniService.confirmPayment(request.orderNo());
         return ApiResponse.ok(null);
+    }
+
+    /**
+     * 为通行资格生成动态入园二维码。
+     */
+    @GetMapping("/entry-token")
+    public ApiResponse<QrCodeGenerateResponse> generateQrCode(
+            @RequestParam Long passEntitlementId
+    ) {
+        return ApiResponse.ok(customerMiniService.generateQrCode(passEntitlementId));
+    }
+
+    /**
+     * 会员举报非本人入园操作。
+     */
+    @PostMapping("/report-unauthorized-entry")
+    public ApiResponse<RiskReportResponse> reportUnauthorizedEntry(
+            @Valid @RequestBody RiskReportRequest request
+    ) {
+        return ApiResponse.ok(customerMiniService.reportUnauthorizedEntry(request));
     }
 }
