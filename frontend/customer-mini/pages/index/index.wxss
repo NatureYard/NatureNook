@@ -11,11 +11,31 @@
 /* ── Hero 卡片 ── */
 
 .hero {
+  position: relative;
+  overflow: hidden;
   padding: 36rpx 32rpx;
   border-radius: 32rpx;
-  background: linear-gradient(135deg, #0f766e, #14b8a6 55%, #99f6e4);
+  background: linear-gradient(135deg, #0f766e, #14b8a6 55%, #bdffed);
   color: #ffffff;
-  box-shadow: 0 24rpx 60rpx rgba(15, 118, 110, 0.18);
+  box-shadow: 0 24rpx 60rpx rgba(15, 118, 110, 0.22);
+}
+
+/* 带有奢华感的水印图形装饰 */
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -40rpx;
+  top: -40rpx;
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.hero-top, .hero-stats {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-top {
@@ -25,8 +45,9 @@
 }
 
 .hero-name {
-  font-size: 40rpx;
-  font-weight: 700;
+  font-size: 44rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
 }
 
 .hero-meta {
@@ -59,8 +80,9 @@
 }
 
 .hero-stat-value {
-  font-size: 36rpx;
-  font-weight: 700;
+  font-size: 40rpx;
+  font-weight: 800;
+  font-family: "DIN", -apple-system, sans-serif;
 }
 
 .hero-stat-label {
@@ -103,9 +125,9 @@
 }
 
 .today-pass-arrow {
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #0f766e;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ── Section ── */
@@ -207,20 +229,30 @@
 }
 
 .entry-icon {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 18rpx;
-  margin-bottom: 14rpx;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  margin-bottom: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 36rpx;
 }
 
-.entry-icon--ticket { background: #dbeafe; }
-.entry-icon--card { background: #fce7f3; }
-.entry-icon--paw { background: #fef3c7; }
-.entry-icon--pass { background: #d1fae5; }
-.entry-icon--dot { background: #e5e7eb; }
+.entry-icon--ticket { background: #dbeafe; color: #3b82f6; }
+.entry-icon--ticket::after { content: "🎟️"; }
+
+.entry-icon--card { background: #fce7f3; color: #ec4899; }
+.entry-icon--card::after { content: "💳"; }
+
+.entry-icon--paw { background: #fef3c7; color: #d97706; }
+.entry-icon--paw::after { content: "🐾"; }
+
+.entry-icon--pass { background: #d1fae5; color: #10b981; }
+.entry-icon--pass::after { content: "✅"; }
+
+.entry-icon--dot { background: #e5e7eb; color: #6b7280; }
+.entry-icon--dot::after { content: "•"; }
 
 .entry-label {
   font-size: 30rpx;
@@ -278,4 +310,36 @@
 .fab-text {
   font-size: 26rpx;
   font-weight: 700;
+}
+
+/* ── 动画与通用交互属性 ── */
+
+@keyframes fadeInMove {
+  from {
+    opacity: 0;
+    transform: translateY(24rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInMove 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.opacity-80 {
+  opacity: 0.8 !important;
+  transition: opacity 0.15s ease;
+}
+
+.scale-98 {
+  transform: scale(0.98) !important;
+  transition: transform 0.15s ease;
+}
+
+.scale-95 {
+  transform: scale(0.95) !important;
+  transition: transform 0.15s ease;
 }

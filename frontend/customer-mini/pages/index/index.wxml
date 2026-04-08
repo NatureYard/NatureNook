@@ -24,19 +24,19 @@
           <view id="home-member-name" class="hero-name">{{memberName}}</view>
           <view class="hero-meta">{{memberLevel}} · {{storeName}}</view>
         </view>
-        <view id="home-open-profile" class="hero-action" bindtap="openProfile">个人中心</view>
+        <view id="home-open-profile" class="hero-action" hover-class="opacity-80" bindtap="openProfile">个人中心</view>
       </view>
 
       <view class="hero-stats">
-        <view id="home-open-orders" class="hero-stat" bindtap="openOrders">
+        <view id="home-open-orders" class="hero-stat" hover-class="opacity-80" bindtap="openOrders">
           <view class="hero-stat-value">{{orderCount}}</view>
           <view class="hero-stat-label">我的订单</view>
         </view>
-        <view class="hero-stat" bindtap="openPets">
+        <view class="hero-stat" hover-class="opacity-80" bindtap="openPets">
           <view class="hero-stat-value">{{petCount}}</view>
           <view class="hero-stat-label">宠物档案</view>
         </view>
-        <view id="home-open-cards" class="hero-stat" bindtap="openCards">
+        <view id="home-open-cards" class="hero-stat" hover-class="opacity-80" bindtap="openCards">
           <view class="hero-stat-value">{{cardCount}}</view>
           <view class="hero-stat-label">活跃卡种</view>
         </view>
@@ -44,10 +44,10 @@
     </view>
 
     <!-- 今日入园提示 -->
-    <view wx:if="{{todayPass}}" class="today-pass fade-in" bindtap="openOrders">
+    <view wx:if="{{todayPass}}" class="today-pass fade-in" hover-class="scale-98" bindtap="openOrders">
       <view class="today-pass-dot"></view>
       <view class="today-pass-text">{{todayPass}}</view>
-      <view class="today-pass-arrow">查看</view>
+      <view class="today-pass-arrow">查看 ❯</view>
     </view>
 
     <!-- 活动轮播 -->
@@ -89,6 +89,7 @@
           wx:for="{{quickEntries}}"
           wx:key="label"
           class="entry-item"
+          hover-class="scale-98"
           data-path="{{item.path}}"
           bindtap="openEntry"
         >
@@ -106,7 +107,7 @@
     </view>
 
     <!-- 快速预约入口 -->
-    <view id="home-open-tickets" class="fab fade-in" bindtap="openTickets">
+    <view id="home-open-tickets" class="fab fade-in" hover-class="scale-95" bindtap="openTickets">
       <view class="fab-text">预约</view>
     </view>
   </block>
