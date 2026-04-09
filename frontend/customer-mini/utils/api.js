@@ -99,16 +99,24 @@ function confirmPayment(orderNo) {
  * 生成入园二维码凭证。
  */
 function generateQrCode(passEntitlementId) {
-  return req.request('/api/c-app/entry-token?passEntitlementId=' + passEntitlementId)
+  return withFallback(function () {
+    return req.request('/api/c-app/entry-token?passEntitlementId=' + passEntitlementId)
+  }, function () {
+    return mock.getMockQrCode(passEntitlementId)
+  })
 }
 
 /**
  * 举报非本人入园操作。
  */
 function reportUnauthorizedEntry(passEntitlementId, reason) {
-  return req.request('/api/c-app/report-unauthorized-entry', {
-    method: 'POST',
-    data: { passEntitlementId: passEntitlementId, reason: reason },
+  return withFallback(function () {
+    return req.request('/api/c-app/report-unauthorized-entry', {
+      method: 'POST',
+      data: { passEntitlementId: passEntitlementId, reason: reason },
+    })
+  }, function () {
+    return mock.reportMockUnauthorized(passEntitlementId, reason)
   })
 }
 

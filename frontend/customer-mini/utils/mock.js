@@ -265,6 +265,35 @@ function confirmMockPayment(orderNo) {
   return null
 }
 
+/**
+ * 模拟生成入园二维码凭证。
+ */
+function getMockQrCode(passEntitlementId) {
+  var now = new Date()
+  var expires = new Date(now.getTime() + 60000)
+  function pad(n) { return String(n).padStart(2, '0') }
+  var expiresStr = expires.getFullYear() + '-' + pad(expires.getMonth() + 1) + '-' + pad(expires.getDate()) +
+    'T' + pad(expires.getHours()) + ':' + pad(expires.getMinutes()) + ':' + pad(expires.getSeconds())
+
+  return {
+    qrContent: 'eyJwIjoxLCJ0IjoibW9ja3Rva2VuMTIzNDU2Nzg5MCIsInRzIjoxNzAwMDAwMDAwfQ.mock_signature_for_dev',
+    expiresAt: expiresStr,
+    passEntitlementId: Number(passEntitlementId),
+    passName: '单次门票入园资格',
+    storeName: '上海萌宠乐园旗舰店',
+  }
+}
+
+/**
+ * 模拟举报非本人入园操作。
+ */
+function reportMockUnauthorized(passEntitlementId, reason) {
+  return {
+    riskEventId: Date.now(),
+    message: '已收到举报，工作人员将尽快核实处理。',
+  }
+}
+
 module.exports = {
   confirmMockPayment: confirmMockPayment,
   createMockReservation: createMockReservation,
@@ -275,5 +304,7 @@ module.exports = {
   getMockPets: getMockPets,
   getMockPrepay: getMockPrepay,
   getMockProfile: getMockProfile,
+  getMockQrCode: getMockQrCode,
   getMockTickets: getMockTickets,
+  reportMockUnauthorized: reportMockUnauthorized,
 }
