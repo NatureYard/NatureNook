@@ -26,7 +26,7 @@
           <view wx:else class="hero-meta">{{memberLevel}} · {{storeName}}</view>
         </view>
         <view wx:if="{{todayPassId}}" class="hero-action pass-entry-btn" hover-class="scale-95" bindtap="openPass">
-          <text style="margin-right:6rpx;font-size:30rpx;">🎫</text> 扫码入园
+          <view class="qr-icon"></view> 扫码入园
         </view>
         <view wx:else id="home-open-profile" class="hero-action" hover-class="opacity-80" bindtap="openProfile">个人中心</view>
       </view>
