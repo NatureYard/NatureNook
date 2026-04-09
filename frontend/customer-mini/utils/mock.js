@@ -1,5 +1,10 @@
-var MOCK_ORDER_STORAGE_KEY = 'mcly_mock_orders'
+function formatToDateStr(date) {
+  return date.getFullYear() + '-' +
+    String(date.getMonth() + 1).padStart(2, '0') + '-' +
+    String(date.getDate()).padStart(2, '0')
+}
 
+var MOCK_ORDER_STORAGE_KEY = 'mcly_mock_orders_v_' + formatToDateStr(new Date());
 function getMockTickets() {
   return [
     {
@@ -69,18 +74,27 @@ function getMockCards() {
   ]
 }
 
+
+
 function buildDefaultOrders() {
+  var now = new Date()
+  var todayStr = formatToDateStr(now)
+  var yesterday = new Date(now)
+  yesterday.setDate(now.getDate() - 1)
+  var yesterdayStr = formatToDateStr(yesterday)
+
   return [
     {
       id: 1,
-      orderNo: 'ORD202604050001',
+      orderNo: 'ORD' + todayStr.replace(/-/g, '') + '0001',
       type: '单次门票',
       status: 'PAID',
       amount: '68.00',
       storeName: '上海萌宠乐园旗舰店',
-      reservationDate: '2026-04-06',
+      reservationDate: todayStr,
       timeSlot: '09:00-12:00',
-      createdAt: '2026-04-05 14:30',
+      createdAt: yesterdayStr + ' 14:30',
+      passEntitlementId: 'PASS-MOCK-001',
     },
     {
       id: 2,
@@ -91,7 +105,8 @@ function buildDefaultOrders() {
       storeName: '上海萌宠乐园旗舰店',
       reservationDate: '',
       timeSlot: '',
-      createdAt: '2026-04-05 10:15',
+      createdAt: yesterdayStr + ' 10:15',
+      passEntitlementId: 'PASS-MOCK-002',
     },
     {
       id: 3,
@@ -100,9 +115,9 @@ function buildDefaultOrders() {
       status: 'USED',
       amount: '128.00',
       storeName: '上海萌宠乐园旗舰店',
-      reservationDate: '2026-04-03',
+      reservationDate: yesterdayStr,
       timeSlot: '13:00-15:00',
-      createdAt: '2026-04-02 09:00',
+      createdAt: yesterdayStr + ' 09:00',
     },
     {
       id: 4,
@@ -111,9 +126,9 @@ function buildDefaultOrders() {
       status: 'CANCELLED',
       amount: '188.00',
       storeName: '上海萌宠乐园旗舰店',
-      reservationDate: '2026-03-30',
+      reservationDate: yesterdayStr,
       timeSlot: '09:00-12:00',
-      createdAt: '2026-03-28 16:45',
+      createdAt: yesterdayStr + ' 16:45',
     },
   ]
 }
@@ -128,7 +143,9 @@ function readMockOrders() {
     // Ignore storage read issues in demo mode.
   }
 
-  return buildDefaultOrders()
+  var defaultOrders = buildDefaultOrders()
+  writeMockOrders(defaultOrders)
+  return defaultOrders
 }
 
 function writeMockOrders(orders) {

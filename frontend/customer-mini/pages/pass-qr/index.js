@@ -18,6 +18,7 @@ Page({
 
   _timer: null,
   _countdownTimer: null,
+  _originalBrightness: null, // 记录原始亮度
 
   onLoad: function (options) {
     if (!options.passEntitlementId) {
@@ -25,12 +26,56 @@ Page({
       return
     }
     this.setData({ passEntitlementId: options.passEntitlementId })
-    this.generateQrCode()
+  },
+
+  onShow: function () {
+    var self = this
+    // 1. 保持屏幕常亮
+    wx.setKeepScreenOn({ keepScreenOn: true })
+
+    // 2. 调高屏幕亮度以提升闸机扫码成功率
+    wx.getScreenBrightness({
+      success: function (res) {
+        if (self._originalBrightness === null) {
+          self._originalBrightness = res.value
+        }
+        wx.setScreenBrightness({ value: 1 })
+      }
+    })
+
+    // 3. 每次页面显示都立即生成最新二维码（防止后台切回时二维码已过期）
+    if (this.data.passEntitlementId) {
+      this.generateQrCode()
+    }
+  },
+
+  onHide: function () {
+    this.stopTimers()
+    this.restoreScreenSettings()
   },
 
   onUnload: function () {
-    if (this._timer) clearInterval(this._timer)
-    if (this._countdownTimer) clearInterval(this._countdownTimer)
+    this.stopTimers()
+    this.restoreScreenSettings()
+  },
+
+  stopTimers: function () {
+    if (this._timer) {
+      clearInterval(this._timer)
+      this._timer = null
+    }
+    if (this._countdownTimer) {
+      clearInterval(this._countdownTimer)
+      this._countdownTimer = null
+    }
+  },
+
+  restoreScreenSettings: function () {
+    // 恢复常亮和亮度设置
+    wx.setKeepScreenOn({ keepScreenOn: false })
+    if (this._originalBrightness !== null) {
+      wx.setScreenBrightness({ value: this._originalBrightness })
+    }
   },
 
   generateQrCode: function () {

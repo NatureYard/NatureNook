@@ -61,8 +61,10 @@ Page({
           return fmt.isToday(o.reservationDate) && (o.status === 'PAID' || o.status === 'BOOKED')
         })
         var todayPass = ''
+        var todayPassId = ''
         if (todayOrders.length > 0) {
-          todayPass = '今日有 ' + todayOrders.length + ' 笔预约可使用'
+          todayPass = '您有今日可用入园凭证（' + todayOrders.length + '张）'
+          todayPassId = todayOrders[0].passEntitlementId || ''
         }
 
         self.setData({
@@ -83,6 +85,7 @@ Page({
           petCount: pets.length,
           cardCount: cards.length,
           todayPass: todayPass,
+          todayPassId: todayPassId,
           loading: false,
         })
       })
@@ -110,7 +113,8 @@ Page({
           orderCount: orders.length,
           petCount: (context.pets || []).length,
           cardCount: (context.cards || []).length,
-          todayPass: todayOrders.length > 0 ? '今日有 ' + todayOrders.length + ' 笔预约可使用' : '',
+          todayPass: todayOrders.length > 0 ? '您有今日可用入园凭证（' + todayOrders.length + '张）' : '',
+          todayPassId: todayOrders.length > 0 ? (todayOrders[0].passEntitlementId || '') : '',
         })
       })
       .catch(function () {})
@@ -141,6 +145,14 @@ Page({
 
   openOrders: function () {
     wx.switchTab({ url: '/pages/orders/index' })
+  },
+
+  openPass: function () {
+    if (this.data.todayPassId) {
+      wx.navigateTo({ url: '/pages/pass-qr/index?id=' + this.data.todayPassId })
+    } else {
+      wx.switchTab({ url: '/pages/orders/index' })
+    }
   },
 
   openPets: function () {

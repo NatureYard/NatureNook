@@ -91,43 +91,34 @@
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* ── 今日入园提示 ── */
+/* ── 改进合并后的入园凭证按钮 ── */
 
-.today-pass {
+.hero-meta-highlight {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #ffedd5;
+  font-weight: 600;
+  text-shadow: 0 2rpx 4rpx rgba(15, 118, 110, 0.4);
+}
+
+.pass-entry-btn {
+  flex-shrink: 0;
+  padding: 14rpx 28rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.95);
+  color: #0f766e;
+  font-size: 26rpx;
+  font-weight: 800;
   display: flex;
   align-items: center;
-  margin-top: 20rpx;
-  padding: 22rpx 28rpx;
-  border-radius: 20rpx;
-  background: #ecfdf5;
-  border-left: 6rpx solid #0f766e;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+  animation: pulseLight 2s infinite;
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
 }
 
-.today-pass-dot {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 50%;
-  background: #0f766e;
-  margin-right: 16rpx;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.today-pass-text {
-  flex: 1;
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #065f46;
-}
-
-.today-pass-arrow {
-  font-size: 26rpx;
-  color: #0f766e;
-  font-weight: 700;
+@keyframes pulseLight {
+  0%, 100% { box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15); transform: translateY(0); }
+  50% { box-shadow: 0 12rpx 32rpx rgba(255, 255, 255, 0.4); transform: translateY(-2rpx); }
 }
 
 /* ── Section ── */
@@ -248,8 +239,8 @@
 .entry-icon--paw { background: #fef3c7; color: #d97706; }
 .entry-icon--paw::after { content: "🐾"; }
 
-.entry-icon--pass { background: #d1fae5; color: #10b981; }
-.entry-icon--pass::after { content: "✅"; }
+.entry-icon--pass { background: #ede9fe; color: #8b5cf6; }
+.entry-icon--pass::after { content: "🎫"; }
 
 .entry-icon--dot { background: #e5e7eb; color: #6b7280; }
 .entry-icon--dot::after { content: "•"; }

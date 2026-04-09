@@ -124,12 +124,23 @@
   border-radius: 14rpx;
   margin-right: 18rpx;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
 }
 
-.icon-order { background: #dbeafe; }
-.icon-ticket { background: #d1fae5; }
-.icon-card { background: #fce7f3; }
-.icon-pet { background: #fef3c7; }
+.icon-order { background: #e0f2fe; color: #0ea5e9; }
+.icon-order::after { content: "🧾"; }
+
+.icon-ticket { background: #dbeafe; color: #3b82f6; }
+.icon-ticket::after { content: "🎟️"; }
+
+.icon-card { background: #fce7f3; color: #ec4899; }
+.icon-card::after { content: "💳"; }
+
+.icon-pet { background: #fef3c7; color: #d97706; }
+.icon-pet::after { content: "🐾"; }
 
 .menu-text {
   flex: 1;
